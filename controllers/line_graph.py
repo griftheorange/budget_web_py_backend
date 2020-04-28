@@ -4,7 +4,7 @@ import json
 import pandas as pd
 
 def getLineData():
-    df = load_excel_file(ColumnSets.BUDGET_ALL)
+    df = load_excel_file(ColumnSets.BUDGET_STD)
     datasets = []
     series = df.columns
     series = series.delete(series.get_loc("Date"))
@@ -14,13 +14,9 @@ def getLineData():
         count = 0
         for header in series:
             datasets[count].append({
-                'x': row["Date"],
+                'x': row["Date"].timestamp(),
                 'y': row[header]
             })
             count += 1
 
-    return json.dumps(datasets, default=dateConverter)
-
-def dateConverter(date):
-    if isinstance(date, pd.Timestamp):
-        return date.strftime('%Y-%m-%d')
+    return json.dumps(datasets)
