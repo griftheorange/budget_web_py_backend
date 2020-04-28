@@ -1,9 +1,11 @@
 from flask import Flask
+from flask_cors import CORS
+from constants import ColumnSets
 from loader import *
-from column_sets import ColumnSets
 import json
 
 app = Flask(__name__)
+CORS(app)
 
 @app.route('/')
 def hello_world():
@@ -11,6 +13,6 @@ def hello_world():
 
 @app.route('/data')
 def data_to_json():
-    df = load_excel_file()
+    df = load_excel_file(ColumnSets.BUDGET_STD)
     return df.to_json()
     
