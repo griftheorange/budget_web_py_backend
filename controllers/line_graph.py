@@ -9,11 +9,14 @@ def getLineData():
     series = df.columns
     series = series.delete(series.get_loc("Date"))
     for i in range(0, len(series)):
-        datasets.append([])
+        datasets.append({
+            'header': series[i],
+            'data': []
+            })
     for index, row in df.iterrows():
         count = 0
         for header in series:
-            datasets[count].append({
+            datasets[count]['data'].append({
                 'x': row["Date"].timestamp(),
                 'y': row[header]
             })
