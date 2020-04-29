@@ -35,12 +35,13 @@ class Loaders:
     # reads file at new address into DF and returns DF
     def save_and_load_file(file):
         df = None
+        print(file.mimetype)
         if("csv" in file.content_type):
             address = "resources/csv/%s"%(file.filename.replace(" ","_"))
             file.save(address)
             df = pd.read_csv(address)
-        elif("xl" in file.content_type):
-            address = "resources/csv/%s"%(file.filename.replace(" ","_"))
+        elif("officedocument" in file.content_type):
+            address = "resources/xl/%s"%(file.filename.replace(" ","_"))
             file.save(address)
             df = pd.read_excel(address)
         return df
