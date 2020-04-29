@@ -30,7 +30,6 @@ def get_line_data(filename, cols=None):
     return datasets
 
 def load_and_print_csv():
-    df = load_csv_file("transactions")
-    pd.set_option('display.max_rows', None)
-    pd.set_option('display.max_columns', None)
+    df = load_csv_file("transactions2")
+    pd.set_option("display.max_columns",None)
     print(df)
