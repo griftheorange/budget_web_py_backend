@@ -1,4 +1,4 @@
-from loaders import *
+from controllers.loaders import *
 import pandas as pd
 
 # returns a data frame of the loaded file
@@ -28,3 +28,7 @@ def get_line_data(filename, cols=None):
             count += 1
 
     return datasets
+
+def load_and_print_csv():
+    df = load_csv_file("transactions")
+    print(df)

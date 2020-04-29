@@ -22,3 +22,8 @@ def data(filename):
 @app.route('/data', methods=["POST"])
 def post_data():
     return "Hello"
+
+@app.route('/print_csv')
+def print_csv():
+    fetch_print_csv()
+    return "Printed"

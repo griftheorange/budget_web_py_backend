@@ -6,3 +6,6 @@ def fetch_line_data(filename, cols=None):
 
 def fetch_data(filename, cols=None):
     return get_data(filename, cols).to_json()
+
+def fetch_print_csv():
+    load_and_print_csv()

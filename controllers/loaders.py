@@ -7,7 +7,7 @@ def load_excel_file(filename, cols=None):
     else:
         df = pd.read_excel("resources/%s.xlsx"%filename, usecols=cols, parse_dates=['Date'])
     
-    df.filename = "data"
+    df.filename = filename
     return df
 
 def load_pickle_file(filename, cols=None):
@@ -16,5 +16,14 @@ def load_pickle_file(filename, cols=None):
     else:
         df = pd.read_pickle("resources/%s.p"%filename)[cols]
     
-    df.filename = "data"
+    df.filename = filename
+    return df
+
+def load_csv_file(filename, cols=None):
+    if(cols == None):
+        df = pd.read_csv("resources/%s.csv"%filename)
+    else:
+        df = pd.read_csv("resources/%s.csv"%filename, usecols=cols)
+    
+    df.filename = filename
     return df
