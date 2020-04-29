@@ -1,10 +1,15 @@
-from loader import *
-from constants import ColumnSets
-import json
+from loaders import *
 import pandas as pd
 
-def getLineData():
-    df = load_excel_file(ColumnSets.BUDGET_STD)
+# returns a data frame of the loaded file
+def get_data(filename, cols=None):
+    df = load_pickle_file(filename, cols)
+    return df
+
+# returns an array of two key dictionaries -> header and data
+# the data key points to an array of dictionaries with x,y keys pointing to coordinates for all data values of that series
+def get_line_data(filename, cols=None):
+    df = load_pickle_file(filename, cols)
     datasets = []
     series = df.columns
     series = series.delete(series.get_loc("Date"))
@@ -22,4 +27,4 @@ def getLineData():
             })
             count += 1
 
-    return json.dumps(datasets)
+    return datasets
