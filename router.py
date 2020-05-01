@@ -16,7 +16,12 @@ def hello_world():
 
 @app.route('/line_data/<filename>', methods=["GET"])
 def line_data(filename):
-    return JSON.fetch_line_data(filename, cols=ColumnSets.BUDGET_STD)
+    cols = None
+    if(request.args.get("columns") == "ALL"):
+        cols = ColumnSets.BUDGET_ALL
+    else:
+        cols = ColumnSets.BUDGET_STD
+    return JSON.fetch_line_data(filename, cols=cols)
 
 @app.route('/data/<filename>', methods=["GET"])
 def data(filename):
