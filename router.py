@@ -28,6 +28,7 @@ def data_index():
     html = get_filenames()
     return html
 
+#helper funciton for /data index route
 def get_filenames():
     html = "<ul>"
     for filename in listdir('resources'):
