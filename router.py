@@ -25,11 +25,26 @@ def line_data(filename):
 @app.route('/data', methods=['GET'])
 def data_index():
     print(listdir('resources'))
+    html = get_filenames()
+    return html
+
+def get_filenames():
     html = "<ul>"
     for filename in listdir('resources'):
         html += "<li>" + filename + "</li>"
+        if(filename == "csv"):
+            html += "<ul>"
+            for filename in listdir('resources/csv'):
+                html += "<li>" + filename + "</li>"
+            html += "</ul>"
+        if(filename == "xl"):
+            html += "<ul>"
+            for filename in listdir('resources/xl'):
+                html += "<li>" + filename + "</li>"
+            html += "</ul>"
     html += "</ul>"
     return html
+
 
 @app.route('/data', methods=["POST"])
 def post_data():
