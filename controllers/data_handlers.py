@@ -66,7 +66,7 @@ class DataHandlers:
 
         #converts dict to DF, then concats to my data, and sorts by date, reseting index values
         new_dataframe = pd.DataFrame.from_dict(new_dataframe).sort_values(by="Date")
-        data = pd.concat([data, new_dataframe]).sort_values(by='Date').reset_index(drop=True)
+        data = pd.concat([data, new_dataframe]).sort_values(by=['Date', 'Type']).reset_index(drop=True)
         new_tail = data.shape[0]
 
         #finds first index occurrence of lowest added date for 
