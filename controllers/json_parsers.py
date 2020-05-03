@@ -7,4 +7,7 @@ class JSONParsers:
 
     def fetch_data(filename, cols=None):
         return DH.get_data(filename, cols).to_json()
+    
+    def save_and_insert_file(file):
+        return DH.save_and_insert_file(file).to_json()
 

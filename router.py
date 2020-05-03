@@ -51,7 +51,7 @@ def get_filenames():
 def post_data():
     file = request.files['file']
     if(file):
-        DH.save_and_print_file(file)
+        return JSON.save_and_insert_file(file)
     return "Hello"
 
 @app.route('/data/<filename>', methods=["GET"])
@@ -63,3 +63,8 @@ def data(filename):
 def print_csv():
     DH.load_and_print_csv()
     return "Printed"
+
+@app.route('/reset')
+def reset_pickle():
+    DH.reset_pickle()
+    return "Reset"

@@ -35,7 +35,6 @@ class Loaders:
     # reads file at new address into DF and returns DF
     def save_and_load_file(file):
         df = None
-        print(file.mimetype)
         if("csv" in file.content_type):
             address = "resources/csv/%s"%(file.filename.replace(" ","_"))
             file.save(address)
