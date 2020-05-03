@@ -16,11 +16,6 @@ CORS(app)
 def hello_world():
     return "<h1 style='color:blue;'>Hello World!</h1>"
 
-@app.route('/line_data/<filename>', methods=["GET"])
-def line_data(filename):
-    cols = ColumnSets.BUDGET_ALL
-    return JSON.fetch_line_data(filename, cols=cols)
-
 # just for testing and file listing, not necessarily a planned fetch yet
 @app.route('/data', methods=['GET'])
 def data_index():
@@ -46,7 +41,19 @@ def get_filenames():
     html += "</ul>"
     return html
 
+@app.route('/data/<filename>', methods=["GET"])
+def data(filename):
+    return JSON.fetch_data(filename)
 
+# Outdated, for now I'll send up both data and line data in single fetch
+# Through '/data/<filename>' route
+@app.route('/line_data/<filename>', methods=["GET"])
+def line_data(filename):
+    cols = ColumnSets.BUDGET_ALL
+    return JSON.fetch_line_data(filename, cols=cols)
+
+#saves sent file to proper directory then loads in data
+#inserts to data.p and returns
 @app.route('/data', methods=["POST"])
 def post_data():
     file = request.files['file']
@@ -54,17 +61,14 @@ def post_data():
         return JSON.save_and_insert_file(file)
     return "Hello"
 
-@app.route('/data/<filename>', methods=["GET"])
-def data(filename):
-    return JSON.fetch_data(filename)
-
-
-@app.route('/print_csv')
-def print_csv():
-    DH.load_and_print_csv()
-    return "Printed"
-
+# resets data.p based on source xl file
 @app.route('/reset')
 def reset_pickle():
     DH.reset_pickle()
     return "Reset"
+
+#for testing
+@app.route('/print_csv')
+def print_csv():
+    DH.load_and_print_csv()
+    return "Printed"
