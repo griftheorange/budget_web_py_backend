@@ -7,8 +7,13 @@ class JSONParsers:
     # Gets full table data and formatted line graph data from data handler
     # Packages both sets into relevant keys, return json object
     def fetch_data(filename, cols=None):
+        columns_to_decimalize = ['Cost', 'Checking', 'Savings', 'Total', 'Total Income']
         format_set = {}
-        format_set['data'] = DH.get_data(filename).to_dict()
+        table_data = DH.get_data(filename).to_dict()
+        table_data['Date'] = {k: v.strftime("%m/%d/%Y") for k,v in table_data['Date'].items()}
+        for column in columns_to_decimalize:
+            table_data[column] = {k: "{:.2f}".format(v) for k,v in table_data[column].items()}
+        format_set['table_data'] = table_data
         format_set['line_data'] = DH.get_line_data(filename, cols)
         return format_set
 
