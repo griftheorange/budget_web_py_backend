@@ -77,15 +77,6 @@ class DataHandlers:
 
         #iterates and calculates column values for derived columns
         DataHandlers.recalc_check_sav_tot_from(data, old_tail, new_tail)
-
-        #prints new dataframe (for testing)
-        pd.set_option("display.max_columns",None)
-        pd.set_option("display.max_rows", None)
-        print(data)
-        print("Last index:")
-        print(old_tail)
-        print(new_tail)
-        print(min_date_in_new)
         data.to_pickle('resources/data.p')
         return data
 
