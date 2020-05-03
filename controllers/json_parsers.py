@@ -4,7 +4,7 @@ import json
 class JSONParsers:
     def fetch_data(filename, cols=None):
         format_set = {}
-        format_set['data'] = DH.get_data(filename, cols).to_dict()
+        format_set['data'] = DH.get_data(filename).to_dict()
         format_set['line_data'] = DH.get_line_data(filename, cols)
         return format_set
 

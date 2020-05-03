@@ -23,6 +23,42 @@ def data_index():
     html = get_filenames()
     return html
 
+@app.route('/data/<filename>', methods=["GET"])
+def data(filename):
+    cols = ColumnSets.BUDGET_ALL
+    return JSON.fetch_data(filename, cols=cols)
+
+#saves sent file to proper directory then loads in data
+#inserts to data.p and returns
+@app.route('/data', methods=["POST"])
+def post_data():
+    file = request.files['file']
+    if(file):
+        return JSON.save_and_insert_file(file)
+    return "Hello"
+
+# resets data.p based on source xl file
+@app.route('/reset')
+def reset_pickle():
+    DH.reset_pickle()
+    return "Reset"
+
+
+#####################################################################
+# Outdated, for now I'll send up both data and line data in single fetch
+# Through '/data/<filename>' route
+# @app.route('/line_data/<filename>', methods=["GET"])
+# def line_data(filename):
+#     cols = ColumnSets.BUDGET_ALL
+#     return JSON.fetch_line_data(filename, cols=cols)
+#####################################################################
+
+#for testing
+@app.route('/print_csv')
+def print_csv():
+    DH.load_and_print_csv()
+    return "Printed"
+
 #helper funciton for /data index route
 def get_filenames():
     html = "<ul>"
@@ -40,35 +76,3 @@ def get_filenames():
             html += "</ul>"
     html += "</ul>"
     return html
-
-@app.route('/data/<filename>', methods=["GET"])
-def data(filename):
-    return JSON.fetch_data(filename)
-
-# Outdated, for now I'll send up both data and line data in single fetch
-# Through '/data/<filename>' route
-@app.route('/line_data/<filename>', methods=["GET"])
-def line_data(filename):
-    cols = ColumnSets.BUDGET_ALL
-    return JSON.fetch_line_data(filename, cols=cols)
-
-#saves sent file to proper directory then loads in data
-#inserts to data.p and returns
-@app.route('/data', methods=["POST"])
-def post_data():
-    file = request.files['file']
-    if(file):
-        return JSON.save_and_insert_file(file)
-    return "Hello"
-
-# resets data.p based on source xl file
-@app.route('/reset')
-def reset_pickle():
-    DH.reset_pickle()
-    return "Reset"
-
-#for testing
-@app.route('/print_csv')
-def print_csv():
-    DH.load_and_print_csv()
-    return "Printed"
