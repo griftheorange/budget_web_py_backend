@@ -10,7 +10,7 @@ class DataHandlers:
         df = Loaders.load_pickle_file(filename, cols)
         return df
 
-    # returns an array of two key dictionaries -> header and data
+    # returns an array of two key dictionary -> header and data
     # the data key points to an array of dictionaries with x,y keys pointing to coordinates for all data values of that series
     def get_line_data(filename, cols=None):
         # Loads File from memory into df, initializes datasets and series ('Columns')
