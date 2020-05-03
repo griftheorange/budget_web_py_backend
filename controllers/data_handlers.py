@@ -86,7 +86,7 @@ class DataHandlers:
         print(old_tail)
         print(new_tail)
         print(min_date_in_new)
-        # data.to_pickle('resources/data.p')
+        data.to_pickle('resources/data.p')
         return data
 
     def recalc_check_sav_tot_from(data, start, end):
