@@ -12,30 +12,35 @@ CORS(app)
 
 # All computation other than non-null checks done through data_handler and json_parsers class
 # Calls go to to Data-Handler through json parser class if a json object needs to be returned
+#############################################################################################
+
+#default route to check if server is running properly
 @app.route('/')
 def hello_world():
     return "<h1 style='color:blue;'>Hello World!</h1>"
 
-# just for testing and file listing, not necessarily a planned fetch yet
+#Index for all files in resource directory, may be needed by frontend in future
 @app.route('/data', methods=['GET'])
 def data_index():
     print(listdir('resources'))
     html = get_filenames()
     return html
 
+#Getter for bundled data, packages data => json and formatted line data => json into two keys, "data" and "line_data"
 @app.route('/data/<filename>', methods=["GET"])
 def data(filename):
     cols = ColumnSets.BUDGET_ALL
     return JSON.fetch_data(filename, cols=cols)
 
-#saves sent file to proper directory then loads in data
-#inserts to data.p and returns
+#saves file to proper directory loads in data, updates data.p and returns json
+#inserts to data.p and returns success or failure
 @app.route('/data', methods=["POST"])
 def post_data():
     file = request.files['file']
     if(file):
-        return JSON.save_and_insert_file(file)
-    return "Hello"
+        DH.save_and_insert_file(file)
+        return "Success"
+    return "Failed"
 
 # resets data.p based on source xl file
 @app.route('/reset')
@@ -57,7 +62,7 @@ def reset_pickle():
 @app.route('/print_csv')
 def print_csv():
     DH.load_and_print_csv()
-    return "Printed"
+    return "Success"
 
 #helper funciton for /data index route
 def get_filenames():

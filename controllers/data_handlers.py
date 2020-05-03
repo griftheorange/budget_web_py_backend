@@ -13,15 +13,21 @@ class DataHandlers:
     # returns an array of two key dictionaries -> header and data
     # the data key points to an array of dictionaries with x,y keys pointing to coordinates for all data values of that series
     def get_line_data(filename, cols=None):
+        # Loads File from memory into df, initializes datasets and series ('Columns')
         df = Loaders.load_pickle_file(filename, cols)
         datasets = []
         series = df.columns
         series = series.delete(series.get_loc("Date"))
+
+        # Maps columns to objects, column head goes to header key
+        # Data key will hold array of formatted data objects
         for i in range(0, len(series)):
             datasets.append({
                 'header': series[i],
                 'data': []
                 })
+        # Iterates through rows, then takes each column values out of the row
+        # and inserts the necessary data into the corresponding dataset array
         for index, row in df.iterrows():
             count = 0
             for header in series:
@@ -33,14 +39,16 @@ class DataHandlers:
 
         return datasets
 
-    #Saves a file sent back and inserts the data into the dataset
+    # Saves a file sent back and inserts the data into the dataset
     def save_and_insert_file(file):
-        #load in uploaded file and current data as DFs
+        # Load in uploaded file and current data as DFs
+        # Old tail is default index of earliest value to be updated (For updating derived values: Checking, Savings, Total, Total Inc)
         uploaded_file = Loaders.save_and_load_file(file)
         data = Loaders.load_pickle_file("data")
         old_tail = data.shape[0]
 
-        #Sets framework for data map
+        # Sets framework to build a dataframe out of new data
+        # Needed to map columns in uploaded CSVs to my data columns
         new_dataframe = {
             'Transaction History':[],
             'Date':[],
@@ -51,7 +59,7 @@ class DataHandlers:
             'Total':[],
             'Total Income':[]
         }
-        #iterate through uploaded data and insert datum where appropriate
+        # Iterate through uploaded data and insert datum where appropriate
         for index, row in uploaded_file.iterrows():
             if(row['Amount'] >= 0):
                 new_dataframe['Transaction History'].append(row['Merchant Category Description'])
@@ -64,23 +72,30 @@ class DataHandlers:
                 new_dataframe['Total Income'].append(0)
         min_date_in_new = min(new_dataframe['Date'])
 
-        #converts dict to DF, then concats to my data, and sorts by date, reseting index values
+        # Converts dict to DF, then concats to my data, and sorts them by date primarily, reseting index values
         new_dataframe = pd.DataFrame.from_dict(new_dataframe).sort_values(by="Date")
         data = pd.concat([data, new_dataframe]).sort_values(by=['Date', 'Type', 'Transaction History', 'Cost']).reset_index(drop=True)
-        new_tail = data.shape[0]
 
-        #finds first index occurrence of lowest added date for 
+        # Uses the minimum date in the new data defined above
+        # Finds first index occurrence of lowest added date for the new data
+        # This way, if data is added that is inserted BEFORE previous existing data,
+        # the derived values (Check, Sav, Tot etc) will adjust properly
+        # This does have the side-effect of overwriting sacvings transfers, but this can be accounted for later
         for index, row in data.iterrows():
             if(row['Date'] == min_date_in_new):
                 old_tail = index
                 break
 
-        #iterates and calculates column values for derived columns
-        DataHandlers.recalc_check_sav_tot_from(data, old_tail, new_tail)
+        # Iterates and calculates column values for derived columns
+        DataHandlers.recalc_check_sav_tot_from(data, old_tail)
+        
+        # Saves shiny new Data to pickle fiel
         data.to_pickle('resources/data.p')
-        return data
 
-    def recalc_check_sav_tot_from(data, start, end):
+    # Helper funciton for recalculating Checking, Saving, Total, Total Income Columns
+    # Using start index, updates values in relavent rows until end of dataframe 
+    def recalc_check_sav_tot_from(data, start):
+        end = data.shape[0]
         for i in range(start, end):
             data.at[i, 'Checking'] = data.at[i-1, 'Checking'] + data.at[i, 'Cost']
             data.at[i, 'Savings'] = data.at[i-1, 'Savings']
@@ -90,6 +105,9 @@ class DataHandlers:
             else:
                 data.at[i, 'Total Income'] = data.at[i-1, 'Total Income']
 
+    ####################################################
+    # Below is for testing primarily
+    
     def load_and_print_csv():
         df = Loaders.load_csv_file("transactions2")
         pd.set_option("display.max_columns",None)
