@@ -1,6 +1,6 @@
 from io import StringIO
 from controllers.loaders import Loaders
-from constants import ColumnSets, Routes
+from constants import *
 import pandas as pd
 
 #Data Handlers Manipulates Dataframes and DataStructures for return/formatting
@@ -42,6 +42,26 @@ class DataHandlers:
                 count += 1
 
         return datasets
+
+    def get_pie_data(filename, cats, cols=None):
+        df = Loaders.load_pickle_file(filename, cols)
+        df = df.groupby(['Type']).sum()
+        df.at['INCOME', 'Cost'] += 10800
+        df.at['TAX', 'Cost'] -= 5703.06
+        df.at['UNTRACKED', 'Cost'] -= 3200
+
+        dataset = {
+            'data':[],
+            'labels':[]
+        }
+        for i in range(len(cats)):
+            datum = df.at[cats[i], 'Cost']
+            if(datum < 0):
+                datum *= -1
+            dataset['data'].append(round(datum, 2))
+            dataset['labels'].append(cats[i])
+        print(dataset)
+        return dataset
 
     def update_cell(body):
         df = Loaders.load_pickle_file('data')

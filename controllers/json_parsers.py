@@ -7,7 +7,7 @@ import json
 class JSONParsers:
     # Gets full table data and formatted line graph data from data handler
     # Packages both sets into relevant keys, return json object
-    def fetch_data(filename, cols=None):
+    def fetch_data(filename):
         # Some columns need formatting to comma-separated 2-decimal dollar values
         columns_to_decimalize = ['Cost', 'Checking', 'Savings', 'Total', 'Total Income']
         format_set = {}
@@ -22,7 +22,10 @@ class JSONParsers:
         
         # Gets processed Line Data and places both in appropriate keys, returning dictionary
         format_set['table_data'] = table_data
-        format_set['line_data'] = DH.get_line_data(filename, cols)
+        format_set['line_data'] = DH.get_line_data(filename, ColumnSets.LINE)
+        format_set['spendings_pie_data'] = DH.get_pie_data(filename, Categories.SPENDINGS, ColumnSets.PIE)
+        format_set['income_pie_data'] = DH.get_pie_data(filename, Categories.INCOME, ColumnSets.PIE)
+        
         format_set['categories'] = Categories.GRIFFIN
         format_set['columns'] = ColumnSets.COLUMN_LIST
         return format_set

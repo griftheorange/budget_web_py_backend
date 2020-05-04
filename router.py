@@ -22,15 +22,13 @@ def hello_world():
 #Index for all files in resource directory, may be needed by frontend in future
 @app.route('/data', methods=['GET'])
 def data_index():
-    print(listdir('resources'))
     html = get_filenames()
     return html
 
 #Getter for bundled data, packages data => json and formatted line data => json into two keys, "data" and "line_data"
 @app.route('/data/<filename>', methods=["GET"])
 def data(filename):
-    cols = ColumnSets.BUDGET_ALL
-    return JSON.fetch_data(filename, cols=cols)
+    return JSON.fetch_data(filename)
 
 #saves file to proper directory loads in data, updates data.p and returns json
 #inserts to data.p and returns success or failure
@@ -60,7 +58,7 @@ def reset_pickle():
 # Through '/data/<filename>' route
 # @app.route('/line_data/<filename>', methods=["GET"])
 # def line_data(filename):
-#     cols = ColumnSets.BUDGET_ALL
+#     cols = ColumnSets.LINE
 #     return JSON.fetch_line_data(filename, cols=cols)
 #####################################################################
 
