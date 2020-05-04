@@ -20,6 +20,7 @@ class DataHandlers:
         datasets = []
         series = df.columns
         series = series.delete(series.get_loc("Date"))
+        series = series.delete(series.get_loc('Transaction History'))
 
         # Maps columns to objects, column head goes to header key
         # Data key will hold array of formatted data objects
@@ -35,7 +36,8 @@ class DataHandlers:
             for header in series:
                 datasets[count]['data'].append({
                     'x': row["Date"].timestamp(),
-                    'y': round(row[header], 2)
+                    'y': round(row[header], 2),
+                    'name':row['Transaction History']
                 })
                 count += 1
 

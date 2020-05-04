@@ -1,6 +1,6 @@
 class ColumnSets:
     COLUMN_LIST = ['Transaction History', 'Date', 'Type', 'Cost', 'Checking', 'Savings', 'Total', 'Total Income']
-    BUDGET_ALL = ['Date', 'Cost', 'Checking', 'Savings', 'Total', 'Total Income']
+    BUDGET_ALL = ['Transaction History', 'Date', 'Cost', 'Checking', 'Savings', 'Total', 'Total Income']
     BUDGET_STD = ['Date', 'Cost', 'Checking', 'Savings', 'Total']
 
 class Categories:
