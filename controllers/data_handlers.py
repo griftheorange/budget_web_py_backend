@@ -1,5 +1,6 @@
 from io import StringIO
 from controllers.loaders import Loaders
+from constants import ColumnSets
 import pandas as pd
 
 #Data Handlers Manipulates Dataframes and DataStructures for return/formatting
@@ -78,16 +79,9 @@ class DataHandlers:
     # Constructs dict framework for new dataframe, and based on card type, parses the column values into the right slots
     # TODO Error catching
     def construct_new_dataframe_dict(file, card_type):
-        new_dataframe = {
-            'Transaction History':[],
-            'Date':[],
-            'Type':[],
-            'Cost':[],
-            'Checking':[],
-            'Savings':[],
-            'Total':[],
-            'Total Income':[]
-        }
+        new_dataframe = {}
+        for column in ColumnSets.COLUMN_LIST:
+            new_dataframe[column] = []
         # Iterate through uploaded data and insert datum where appropriate
         if(card_type == "TD"):
             for index, row in file.iterrows():

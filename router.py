@@ -43,6 +43,11 @@ def post_data():
         return "Success"
     return "Failed"
 
+@app.route('/update_cell', methods=["PATCH"])
+def update_cell():
+    print(request.json)
+    return "Success"
+
 # resets data.p based on source xl file
 @app.route('/reset')
 def reset_pickle():
