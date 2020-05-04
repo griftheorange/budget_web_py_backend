@@ -53,6 +53,10 @@ def new_entry():
 def save_backup():
     return JSON.save_backup(request.json)
 
+@app.route('/export_file', methods=["POST"])
+def export_file():
+    return JSON.export_file(request.json)
+
 # resets data.p based on source xl file
 @app.route('/reset')
 def reset_pickle():
