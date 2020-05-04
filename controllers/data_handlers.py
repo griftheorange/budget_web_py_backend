@@ -67,6 +67,33 @@ class DataHandlers:
         df.at[int(body['index']), body['column']] = body['category']
         df.to_pickle(Routes.STORAGE_ADDRESS)
         return True
+    
+    def add_entry(body):
+        data = Loaders.load_pickle_file('data')
+        new_dataframe = {}
+        new_dataframe['Transaction History'] = [body['th']]
+        min_date_in_new = pd.Timestamp(body['date'])
+        new_dataframe['Date'] = [min_date_in_new]
+        if(body['type']):
+            new_dataframe['Type'] = [body['type']]
+        else:
+            new_dataframe['Type'] = ['N/A']
+        new_dataframe['Cost'] = [float(body['cost'])]
+        new_dataframe['Checking'] = [0]
+        new_dataframe['Savings'] = [0]
+        new_dataframe['Total'] = [0]
+        new_dataframe['Total Income'] = [0]
+        new_dataframe = pd.DataFrame.from_dict(new_dataframe)
+        data = pd.concat([data, new_dataframe]).sort_values(by=['Date', 'Type', 'Transaction History', 'Cost']).reset_index(drop=True)
+        old_tail = data.shape[0]
+
+        for index, row in data.iterrows():
+            if(row['Date'] == min_date_in_new):
+                old_tail = index
+                break
+        DataHandlers.recalc_check_sav_tot_from(data, old_tail)
+        data.to_pickle(Routes.STORAGE_ADDRESS)
+        return True
 
     # Saves a file sent back and inserts the data into the dataset
     def save_and_insert_file(file, card_type):
@@ -82,7 +109,7 @@ class DataHandlers:
         min_date_in_new = min(new_dataframe['Date'])
 
         # Converts dict to DF, then concats to my data, and sorts them by date primarily, reseting index values
-        new_dataframe = pd.DataFrame.from_dict(new_dataframe).sort_values(by="Date")
+        new_dataframe = pd.DataFrame.from_dict(new_dataframe)
         data = pd.concat([data, new_dataframe]).sort_values(by=['Date', 'Type', 'Transaction History', 'Cost']).reset_index(drop=True)
 
         # Uses the minimum date in the new data defined above
@@ -144,7 +171,7 @@ class DataHandlers:
                 data.at[i, 'Checking'] = data.at[i-1, 'Checking'] + data.at[i, 'Cost']
                 data.at[i, 'Savings'] = data.at[i-1, 'Savings']
                 data.at[i, 'Total'] = data.at[i, 'Checking'] + data.at[i, 'Savings']
-                if(data.at[i, 'Cost'] >= 0):
+                if(data.at[i, 'Cost'] >= 0 and data.at[i, 'Type'] != "TRANSFER"):
                     data.at[i, 'Total Income'] = data.at[i-1, 'Total Income'] + data.at[i, 'Cost']
                 else:
                     data.at[i, 'Total Income'] = data.at[i-1, 'Total Income']

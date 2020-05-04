@@ -47,8 +47,7 @@ def update_cell():
     
 @app.route('/new_entry', methods=["PATCH"])
 def new_entry():
-    print(request.json)
-    return {'status':'Success'}
+    return JSON.patch_new_entry(request.json)
 
 # resets data.p based on source xl file
 @app.route('/reset')

@@ -44,3 +44,13 @@ class JSONParsers:
                 }
             return {'status':'Error'}
         return {'status':'Error'}
+    
+    def patch_new_entry(body):
+        if(body['th'] and body['date'] and body['cost']):
+            if(DH.add_entry(body)):
+                return {
+                    'status':'Success',
+                    'body':body
+                }
+            return {'status':'Error'}
+        return {'status':'Error'}
