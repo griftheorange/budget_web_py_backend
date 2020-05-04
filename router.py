@@ -45,15 +45,7 @@ def post_data():
 
 @app.route('/update_cell', methods=["PATCH"])
 def update_cell():
-    body = request.json
-    if((body['column'] in ColumnSets.COLUMN_LIST) and (body['category'] in Categories.GRIFFIN)):
-        if(DH.update_cell(body)):
-            return {
-                'status':'Success',
-                'body':body
-            }
-        return {'status':'Error'}
-    return {'status':'Error'}
+    return JSON.patch_data(request.json)
     
 
 # resets data.p based on source xl file
