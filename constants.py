@@ -21,3 +21,6 @@ class Categories:
         'TRAVEL',
         'UNTRACKED',
         'UTILITIES']
+
+class Routes:
+    STORAGE_ADDRESS = 'resources/data.p'

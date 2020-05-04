@@ -1,11 +1,12 @@
 from io import StringIO
 from controllers.loaders import Loaders
-from constants import ColumnSets
+from constants import ColumnSets, Routes
 import pandas as pd
 
 #Data Handlers Manipulates Dataframes and DataStructures for return/formatting
 #Can call to the Loaders class for saving files and loading them into dataframes
 class DataHandlers:
+
     # returns a data frame of the loaded file
     def get_data(filename, cols=None):
         df = Loaders.load_pickle_file(filename, cols)
@@ -40,6 +41,11 @@ class DataHandlers:
 
         return datasets
 
+    def update_cell(body):
+        df = Loaders.load_pickle_file('data')
+        df.at[int(body['index']), body['column']] = body['category']
+        df.to_pickle(Routes.STORAGE_ADDRESS)
+        return True
 
     # Saves a file sent back and inserts the data into the dataset
     def save_and_insert_file(file, card_type):
@@ -72,7 +78,7 @@ class DataHandlers:
         DataHandlers.recalc_check_sav_tot_from(data, old_tail)
         
         # Saves shiny new Data to pickle fiel
-        data.to_pickle('resources/data.p')
+        data.to_pickle(Routes.STORAGE_ADDRESS)
 
 
     # Helper function for save_and_insert file
@@ -137,4 +143,4 @@ class DataHandlers:
         print(df)
 
     def reset_pickle():
-        Loaders.load_excel_file('data').to_pickle('resources/data.p')
+        Loaders.load_excel_file('data').to_pickle(Routes.STORAGE_ADDRESS)
