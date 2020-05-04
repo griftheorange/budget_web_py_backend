@@ -25,6 +25,7 @@ class JSONParsers:
         format_set['line_data'] = DH.get_line_data(filename, ColumnSets.LINE)
         format_set['spendings_pie_data'] = DH.get_pie_data(filename, Categories.SPENDINGS, ColumnSets.PIE)
         format_set['income_pie_data'] = DH.get_pie_data(filename, Categories.INCOME, ColumnSets.PIE)
+        format_set['resources'] = DH.get_resources_filenames()
         
         format_set['categories'] = Categories.GRIFFIN
         format_set['columns'] = ColumnSets.COLUMN_LIST
@@ -53,4 +54,13 @@ class JSONParsers:
                     'body':body
                 }
             return {'status':'Error'}
+        return {'status':'Error'}
+    
+    def save_backup(body):
+        if(body['filetag'] and body['filetag'] in ['p', 'csv', 'xlsx']):
+            if(DH.save_backup(body)):
+                return {
+                    'status':'Success',
+                    'body':body
+                }
         return {'status':'Error'}

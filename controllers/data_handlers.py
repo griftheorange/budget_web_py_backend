@@ -1,4 +1,6 @@
 from io import StringIO
+from os import listdir
+
 from controllers.loaders import Loaders
 from constants import *
 import pandas as pd
@@ -6,6 +8,18 @@ import pandas as pd
 #Data Handlers Manipulates Dataframes and DataStructures for return/formatting
 #Can call to the Loaders class for saving files and loading them into dataframes
 class DataHandlers:
+
+    def get_resources_filenames():
+        resources = {
+            'csv':[],
+            'xl':[],
+            'pickle':[]
+        }
+        for key in resources.keys():
+            for filename in listdir('resources/'+key):
+                resources[key].append(filename)
+        return resources
+            
 
     # returns a data frame of the loaded file
     def get_data(filename, cols=None):
@@ -94,6 +108,22 @@ class DataHandlers:
         DataHandlers.recalc_check_sav_tot_from(data, old_tail)
         data.to_pickle(Routes.STORAGE_ADDRESS)
         return True
+    
+    def save_backup(body):
+        df = Loaders.load_pickle_file('data')
+        tag = body['filetag']
+        if(tag == 'p'):
+            df.to_pickle('resources/pickle/'+body['filename'])
+            return True
+        elif(tag == 'csv'):
+            df.to_csv('resources/csv/'+body['filename'])
+            return True
+        elif(tag == 'xlsx'):
+            df.to_excel('resources/xl/'+body['filename'])
+            return True
+        else:
+            return False
+        
 
     # Saves a file sent back and inserts the data into the dataset
     def save_and_insert_file(file, card_type):

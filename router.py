@@ -49,6 +49,10 @@ def update_cell():
 def new_entry():
     return JSON.patch_new_entry(request.json)
 
+@app.route('/save_backup', methods=["POST"])
+def save_backup():
+    return JSON.save_backup(request.json)
+
 # resets data.p based on source xl file
 @app.route('/reset')
 def reset_pickle():
@@ -84,6 +88,11 @@ def get_filenames():
         if(filename == "xl"):
             html += "<ul>"
             for filename in listdir('resources/xl'):
+                html += "<li>" + filename + "</li>"
+            html += "</ul>"
+        if(filename == "pickle"):
+            html += "<ul>"
+            for filename in listdir('resources/pickle'):
                 html += "<li>" + filename + "</li>"
             html += "</ul>"
     html += "</ul>"
