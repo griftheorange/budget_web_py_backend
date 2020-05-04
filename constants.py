@@ -18,5 +18,4 @@ class Categories:
         'TRANSFER',
         'TRAVEL',
         'UNTRACKED',
-        'UTILITIES',
-        'UTILITY']
+        'UTILITIES']

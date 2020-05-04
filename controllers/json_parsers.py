@@ -1,4 +1,5 @@
 from controllers.data_handlers import DataHandlers as DH
+from constants import Categories
 import json
 
 # Router calls go to data_handlers from here IF a json object
@@ -22,6 +23,7 @@ class JSONParsers:
         # Gets processed Line Data and places both in appropriate keys, returning dictionary
         format_set['table_data'] = table_data
         format_set['line_data'] = DH.get_line_data(filename, cols)
+        format_set['categories'] = Categories.GRIFFIN
         return format_set
 
     # Fetches and returns only JSON of formatted line data
