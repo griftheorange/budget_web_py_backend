@@ -60,7 +60,6 @@ class DataHandlers:
                 datum *= -1
             dataset['data'].append(round(datum, 2))
             dataset['labels'].append(cats[i])
-        print(dataset)
         return dataset
 
     def update_cell(body):
