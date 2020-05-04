@@ -5,6 +5,7 @@ class ColumnSets:
 class Categories:
     GRIFFIN = [
         'BUSINESS',
+        'Correction',
         'DINING',
         'ENTERTAINMENT',
         'GAS',

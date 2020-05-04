@@ -5,9 +5,9 @@ class Loaders:
     # below three methods load files of different types, could stand for refactoring
     def load_excel_file(filename, cols=None):
         if(cols == None):
-            df = pd.read_excel("resources/%s.xlsx"%filename, parse_dates=['Date'])
+            df = pd.read_excel("resources/xl/%s.xlsx"%filename, parse_dates=['Date'])
         else:
-            df = pd.read_excel("resources/%s.xlsx"%filename, usecols=cols, parse_dates=['Date'])
+            df = pd.read_excel("resources/xl/%s.xlsx"%filename, usecols=cols, parse_dates=['Date'])
         
         df.filename = filename
         return df
@@ -23,9 +23,9 @@ class Loaders:
 
     def load_csv_file(filename, cols=None):
         if(cols == None):
-            df = pd.read_csv("resources/%s.csv"%filename)
+            df = pd.read_csv("resources/csv/%s.csv"%filename)
         else:
-            df = pd.read_csv("resources/%s.csv"%filename, usecols=cols)
+            df = pd.read_csv("resources/csv/%s.csv"%filename, usecols=cols)
         
         df.filename = filename
         return df

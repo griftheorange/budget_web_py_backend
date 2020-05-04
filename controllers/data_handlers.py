@@ -118,12 +118,18 @@ class DataHandlers:
     def recalc_check_sav_tot_from(data, start):
         end = data.shape[0]
         for i in range(start, end):
-            data.at[i, 'Checking'] = data.at[i-1, 'Checking'] + data.at[i, 'Cost']
-            data.at[i, 'Savings'] = data.at[i-1, 'Savings']
-            data.at[i, 'Total'] = data.at[i, 'Checking'] + data.at[i, 'Savings']
-            if(data.at[i, 'Cost'] >= 0):
-                data.at[i, 'Total Income'] = data.at[i-1, 'Total Income'] + data.at[i, 'Cost']
+            if(not data.at[i, 'Type'] in ['TRANSFER']):
+                data.at[i, 'Checking'] = data.at[i-1, 'Checking'] + data.at[i, 'Cost']
+                data.at[i, 'Savings'] = data.at[i-1, 'Savings']
+                data.at[i, 'Total'] = data.at[i, 'Checking'] + data.at[i, 'Savings']
+                if(data.at[i, 'Cost'] >= 0):
+                    data.at[i, 'Total Income'] = data.at[i-1, 'Total Income'] + data.at[i, 'Cost']
+                else:
+                    data.at[i, 'Total Income'] = data.at[i-1, 'Total Income']
             else:
+                data.at[i, 'Checking'] = data.at[i-1, 'Checking'] + data.at[i, 'Cost']
+                data.at[i, 'Savings'] = data.at[i-1, 'Savings'] - data.at[i, 'Cost']
+                data.at[i, 'Total'] = data.at[i, 'Checking'] + data.at[i, 'Savings']
                 data.at[i, 'Total Income'] = data.at[i-1, 'Total Income']
 
     ####################################################
@@ -135,4 +141,4 @@ class DataHandlers:
         print(df)
 
     def reset_pickle():
-        Loaders.load_excel_file('xl/data').to_pickle('resources/data.p')
+        Loaders.load_excel_file('data').to_pickle('resources/data.p')
