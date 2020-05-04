@@ -39,8 +39,9 @@ class DataHandlers:
 
         return datasets
 
+
     # Saves a file sent back and inserts the data into the dataset
-    def save_and_insert_file(file):
+    def save_and_insert_file(file, card_type):
         # Load in uploaded file and current data as DFs
         # Old tail is default index of earliest value to be updated (For updating derived values: Checking, Savings, Total, Total Inc)
         uploaded_file = Loaders.save_and_load_file(file)
@@ -49,27 +50,7 @@ class DataHandlers:
 
         # Sets framework to build a dataframe out of new data
         # Needed to map columns in uploaded CSVs to my data columns
-        new_dataframe = {
-            'Transaction History':[],
-            'Date':[],
-            'Type':[],
-            'Cost':[],
-            'Checking':[],
-            'Savings':[],
-            'Total':[],
-            'Total Income':[]
-        }
-        # Iterate through uploaded data and insert datum where appropriate
-        for index, row in uploaded_file.iterrows():
-            if(row['Amount'] >= 0):
-                new_dataframe['Transaction History'].append(row['Merchant Name'])
-                new_dataframe['Date'].append(pd.Timestamp(row['Date']))
-                new_dataframe['Type'].append('N/A')
-                new_dataframe['Cost'].append(-1*row['Amount'])
-                new_dataframe['Checking'].append(0)
-                new_dataframe['Savings'].append(0)
-                new_dataframe['Total'].append(0)
-                new_dataframe['Total Income'].append(0)
+        new_dataframe = DataHandlers.construct_new_dataframe_dict(uploaded_file, card_type)        
         min_date_in_new = min(new_dataframe['Date'])
 
         # Converts dict to DF, then concats to my data, and sorts them by date primarily, reseting index values
@@ -91,6 +72,46 @@ class DataHandlers:
         
         # Saves shiny new Data to pickle fiel
         data.to_pickle('resources/data.p')
+
+
+    # Helper function for save_and_insert file
+    # Constructs dict framework for new dataframe, and based on card type, parses the column values into the right slots
+    # TODO Error catching
+    def construct_new_dataframe_dict(file, card_type):
+        new_dataframe = {
+            'Transaction History':[],
+            'Date':[],
+            'Type':[],
+            'Cost':[],
+            'Checking':[],
+            'Savings':[],
+            'Total':[],
+            'Total Income':[]
+        }
+        # Iterate through uploaded data and insert datum where appropriate
+        if(card_type == "TD"):
+            for index, row in file.iterrows():
+                if(row['Amount'] >= 0):
+                    new_dataframe['Transaction History'].append(row['Merchant Name'])
+                    new_dataframe['Date'].append(pd.Timestamp(row['Date']))
+                    new_dataframe['Type'].append('N/A')
+                    new_dataframe['Cost'].append(-1*row['Amount'])
+                    new_dataframe['Checking'].append(0)
+                    new_dataframe['Savings'].append(0)
+                    new_dataframe['Total'].append(0)
+                    new_dataframe['Total Income'].append(0)
+        else:
+            for index, row in file.iterrows():
+                if(row['Amount'] >= 0):
+                    new_dataframe['Transaction History'].append(row['Description'])
+                    new_dataframe['Date'].append(pd.Timestamp(row['Trans. Date']))
+                    new_dataframe['Type'].append('N/A')
+                    new_dataframe['Cost'].append(-1*row['Amount'])
+                    new_dataframe['Checking'].append(0)
+                    new_dataframe['Savings'].append(0)
+                    new_dataframe['Total'].append(0)
+                    new_dataframe['Total Income'].append(0)
+        return new_dataframe
 
     # Helper funciton for recalculating Checking, Saving, Total, Total Income Columns
     # Using start index, updates values in relavent rows until end of dataframe 

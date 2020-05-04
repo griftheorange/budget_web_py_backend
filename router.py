@@ -37,8 +37,9 @@ def data(filename):
 @app.route('/data', methods=["POST"])
 def post_data():
     file = request.files['file']
+    card_type = request.args['cardType']
     if(file):
-        DH.save_and_insert_file(file)
+        DH.save_and_insert_file(file, card_type)
         return "Success"
     return "Failed"
 
