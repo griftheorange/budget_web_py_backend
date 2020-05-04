@@ -35,7 +35,7 @@ class DataHandlers:
             for header in series:
                 datasets[count]['data'].append({
                     'x': row["Date"].timestamp(),
-                    'y': row[header]
+                    'y': round(row[header], 2)
                 })
                 count += 1
 
