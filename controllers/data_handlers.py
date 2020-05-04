@@ -115,6 +115,7 @@ class DataHandlers:
 
     # Helper funciton for recalculating Checking, Saving, Total, Total Income Columns
     # Using start index, updates values in relavent rows until end of dataframe 
+    # TRANSFER rows handle derived columns differently, this function should respond correctly to this behavior
     def recalc_check_sav_tot_from(data, start):
         end = data.shape[0]
         for i in range(start, end):
@@ -131,6 +132,7 @@ class DataHandlers:
                 data.at[i, 'Savings'] = data.at[i-1, 'Savings'] - data.at[i, 'Cost']
                 data.at[i, 'Total'] = data.at[i, 'Checking'] + data.at[i, 'Savings']
                 data.at[i, 'Total Income'] = data.at[i-1, 'Total Income']
+
 
     ####################################################
     # Below is for testing primarily
