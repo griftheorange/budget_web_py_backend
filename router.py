@@ -41,18 +41,24 @@ def post_data():
         return "Success"
     return "Failed"
 
+# Updates cell with new value and sends back 'status' JSON
 @app.route('/update_cell', methods=["PATCH"])
 def update_cell():
     return JSON.patch_data(request.json)
     
+# Adds a new entry to the table in proper order, re-adjusts calculated values
+# returns 'status' JSON
 @app.route('/new_entry', methods=["PATCH"])
 def new_entry():
     return JSON.patch_new_entry(request.json)
 
+# Saves current data as backup, filetype is dependent on submitted filename
+# returns 'status' JSON
 @app.route('/save_backup', methods=["POST"])
 def save_backup():
     return JSON.save_backup(request.json)
 
+# Loads in current data as given filetype, sends up to frontend
 @app.route('/export_file', methods=["POST"])
 def export_file():
     address = DH.export_file(request.json)
@@ -61,22 +67,12 @@ def export_file():
     except Exception as e:
         return str(e)
 
-# resets data.p based on source xl file
-@app.route('/reset')
+# resets data.p based on submitted filename
+@app.route('/reset', methods=["PATCH"])
 def reset_pickle():
-    DH.reset_pickle()
-    return "Reset"
+    return JSON.reset_from_backup(request.json)
 
-
-#####################################################################
-# Outdated, for now I'll send up both data and line data in single fetch
-# Through '/data/<filename>' route
-# @app.route('/line_data/<filename>', methods=["GET"])
-# def line_data(filename):
-#     cols = ColumnSets.LINE
-#     return JSON.fetch_line_data(filename, cols=cols)
-#####################################################################
-
+##############################################################################
 #helper funciton for /data index route
 def get_filenames():
     html = "<ul>"

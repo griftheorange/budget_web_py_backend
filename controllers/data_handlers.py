@@ -9,6 +9,7 @@ import pandas as pd
 #Can call to the Loaders class for saving files and loading them into dataframes
 class DataHandlers:
 
+    # Serializer for resources directory
     def get_resources_filenames():
         resources = {
             'csv':[],
@@ -21,21 +22,21 @@ class DataHandlers:
         return resources
             
 
-    # returns a data frame of the loaded file
-    def get_data(filename, cols=None):
-        df = Loaders.load_pickle_file(filename, cols)
+    # returns a default dataframe of the table data
+    def get_data(cols=None):
+        df = Loaders.load_data(cols)
         return df
+
 
     # returns an array of two key dictionary -> header and data
     # the data key points to an array of dictionaries with x,y keys pointing to coordinates for all data values of that series
-    def get_line_data(filename, cols=None):
+    def get_line_data(cols=None):
         # Loads File from memory into df, initializes datasets and series ('Columns')
-        df = Loaders.load_pickle_file(filename, cols)
+        df = Loaders.load_data(cols)
         datasets = []
         series = df.columns
         series = series.delete(series.get_loc("Date"))
         series = series.delete(series.get_loc('Transaction History'))
-
         # Maps columns to objects, column head goes to header key
         # Data key will hold array of formatted data objects
         for i in range(0, len(series)):
@@ -54,16 +55,20 @@ class DataHandlers:
                     'name':row['Transaction History']
                 })
                 count += 1
-
         return datasets
 
-    def get_pie_data(filename, cats, cols=None):
-        df = Loaders.load_pickle_file(filename, cols)
+
+    # Returns a dictionary with two keys, data and label, pointing to arrays
+    # Arrays hold data values and labels IN MATCHING ORDER for frontend interpretation
+    def get_pie_data(cats, cols=None):
+        df = Loaders.load_data(cols)
         df = df.groupby(['Type']).sum()
+        # Below adjustments are personal, due to errors in my data, remove if you use
         df.at['INCOME', 'Cost'] += 10800
         df.at['TAX', 'Cost'] -= 5703.06
         df.at['UNTRACKED', 'Cost'] -= 3200
-
+        # Sets framework, iterates through aggregate table and fills matching values
+        # into arrays in order
         dataset = {
             'data':[],
             'labels':[]
@@ -76,14 +81,18 @@ class DataHandlers:
             dataset['labels'].append(cats[i])
         return dataset
 
+
+    # Updates cell with new value. Overwrites pickle
     def update_cell(body):
-        df = Loaders.load_pickle_file(Routes.DATA)
+        df = Loaders.load_data()
         df.at[int(body['index']), body['column']] = body['category']
         df.to_pickle(Routes.STORAGE_ADDRESS)
         return True
     
+    # Adds a new Entry from submitted data
     def add_entry(body):
-        data = Loaders.load_pickle_file(Routes.DATA)
+        # Below block loads in data.p, and initializes values of new row in a dictionary
+        data = Loaders.load_data()
         new_dataframe = {}
         new_dataframe['Transaction History'] = [body['th']]
         min_date_in_new = pd.Timestamp(body['date'])
@@ -97,20 +106,24 @@ class DataHandlers:
         new_dataframe['Savings'] = [0]
         new_dataframe['Total'] = [0]
         new_dataframe['Total Income'] = [0]
+        # Coverts new_dataframe dict to dataframe
         new_dataframe = pd.DataFrame.from_dict(new_dataframe)
+        # Concats new row to old dataframe
         data = pd.concat([data, new_dataframe]).sort_values(by=['Date', 'Type', 'Transaction History', 'Cost']).reset_index(drop=True)
+        # Locates earliest index that Checking, Savings, Total etc will need recalc
         old_tail = data.shape[0]
-
         for index, row in data.iterrows():
             if(row['Date'] == min_date_in_new):
                 old_tail = index
                 break
+        # Recalcs values, overwrites pickle, returns success
         DataHandlers.recalc_check_sav_tot_from(data, old_tail)
         data.to_pickle(Routes.STORAGE_ADDRESS)
         return True
     
+    # Loads dataframe and writes it as file in relevant directory based on submitted filename
     def save_backup(body):
-        df = Loaders.load_pickle_file(Routes.DATA)
+        df = Loaders.load_data()
         tag = body['filetag']
         if(tag == 'p'):
             df.to_pickle(Routes.PICKLE+body['filename'])
@@ -124,8 +137,9 @@ class DataHandlers:
         else:
             return False
     
+    # Very similar to save backup, but instead of saving, exports to frontend file of type dependant on submitted filename
     def export_file(body):
-        df = Loaders.load_pickle_file(Routes.DATA)
+        df = Loaders.load_data()
         tag = body['filetag']
         if(tag == 'p'):
             address = Routes.EXPORTS+body['filename']
@@ -141,13 +155,31 @@ class DataHandlers:
             return address
         else:
             return ""
+        
+    # Loads in submitted file, overwrites data.p with file data to reset
+    def reset_from_backup(body):
+        tag = body['filetag']
+        if(tag == 'p'):
+            df = Loaders.load_pickle_file(body['filename'])
+            df.to_pickle(Routes.STORAGE_ADDRESS)
+            return True
+        elif(tag == 'csv'):
+            df = Loaders.load_csv_file(body['filename'])
+            df.to_pickle(Routes.STORAGE_ADDRESS)
+            return True
+        elif(tag == 'xlsx'):
+            df = Loaders.load_excel_file(body['filename'])
+            df.to_pickle(Routes.STORAGE_ADDRESS)
+            return True
+        else:
+            return False
 
     # Saves a file sent back and inserts the data into the dataset
     def save_and_insert_file(file, card_type):
         # Load in uploaded file and current data as DFs
         # Old tail is default index of earliest value to be updated (For updating derived values: Checking, Savings, Total, Total Inc)
         uploaded_file = Loaders.save_and_load_file(file)
-        data = Loaders.load_pickle_file("data")
+        data = Loaders.load_data()
         old_tail = data.shape[0]
 
         # Sets framework to build a dataframe out of new data
@@ -214,6 +246,7 @@ class DataHandlers:
     def recalc_check_sav_tot_from(data, start):
         end = data.shape[0]
         for i in range(start, end):
+            # Runs standard calc for all non-transfer rows
             if(not data.at[i, 'Type'] in ['TRANSFER']):
                 data.at[i, 'Checking'] = data.at[i-1, 'Checking'] + data.at[i, 'Cost']
                 data.at[i, 'Savings'] = data.at[i-1, 'Savings']
@@ -222,20 +255,10 @@ class DataHandlers:
                     data.at[i, 'Total Income'] = data.at[i-1, 'Total Income'] + data.at[i, 'Cost']
                 else:
                     data.at[i, 'Total Income'] = data.at[i-1, 'Total Income']
+            # Below transforms the TRANSFER rows, which uniquely need to increment Cost AND Savings
+            # Total Income NEVER incremented on TRANSFERS
             else:
                 data.at[i, 'Checking'] = data.at[i-1, 'Checking'] + data.at[i, 'Cost']
                 data.at[i, 'Savings'] = data.at[i-1, 'Savings'] - data.at[i, 'Cost']
                 data.at[i, 'Total'] = data.at[i, 'Checking'] + data.at[i, 'Savings']
                 data.at[i, 'Total Income'] = data.at[i-1, 'Total Income']
-
-
-    ####################################################
-    # Below is for testing primarily
-    
-    def load_and_print_csv():
-        df = Loaders.load_csv_file("transactions2")
-        pd.set_option("display.max_columns",None)
-        print(df)
-
-    def reset_pickle():
-        Loaders.load_excel_file('data').to_pickle(Routes.STORAGE_ADDRESS)
