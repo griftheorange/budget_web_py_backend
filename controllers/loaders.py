@@ -3,8 +3,7 @@ from constants import Routes
 
 #This class handles all file saving and file loading into pandas DFs
 class Loaders:
-    # below three methods load files of different types, could stand for refactoring
-    
+    # below four methods load files of different types
     def load_data(cols=None):
         if(cols == None):
             df = pd.read_pickle(Routes.STORAGE_ADDRESS)
@@ -46,4 +45,5 @@ class Loaders:
             address = Routes.XL+"%s"%(file.filename.replace(" ","_"))
             file.save(address)
             df = pd.read_excel(address)
+        #TODO Add pickle format loader
         return df
