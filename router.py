@@ -1,4 +1,4 @@
-from flask import Flask, request
+from flask import Flask, request, send_file
 from flask_cors import CORS
 
 from os import listdir
@@ -55,7 +55,11 @@ def save_backup():
 
 @app.route('/export_file', methods=["POST"])
 def export_file():
-    return JSON.export_file(request.json)
+    address = DH.export_file(request.json)
+    try:
+        return send_file(address)
+    except Exception as e:
+        return str(e)
 
 # resets data.p based on source xl file
 @app.route('/reset')

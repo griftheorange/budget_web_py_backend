@@ -77,13 +77,13 @@ class DataHandlers:
         return dataset
 
     def update_cell(body):
-        df = Loaders.load_pickle_file('data')
+        df = Loaders.load_pickle_file(Routes.DATA)
         df.at[int(body['index']), body['column']] = body['category']
         df.to_pickle(Routes.STORAGE_ADDRESS)
         return True
     
     def add_entry(body):
-        data = Loaders.load_pickle_file('data')
+        data = Loaders.load_pickle_file(Routes.DATA)
         new_dataframe = {}
         new_dataframe['Transaction History'] = [body['th']]
         min_date_in_new = pd.Timestamp(body['date'])
@@ -110,20 +110,37 @@ class DataHandlers:
         return True
     
     def save_backup(body):
-        df = Loaders.load_pickle_file('data')
+        df = Loaders.load_pickle_file(Routes.DATA)
         tag = body['filetag']
         if(tag == 'p'):
-            df.to_pickle('resources/pickle/'+body['filename'])
+            df.to_pickle(Routes.PICKLE+body['filename'])
             return True
         elif(tag == 'csv'):
-            df.to_csv('resources/csv/'+body['filename'])
+            df.to_csv(Routes.CSV+body['filename'])
             return True
         elif(tag == 'xlsx'):
-            df.to_excel('resources/xl/'+body['filename'])
+            df.to_excel(Routes.XL+body['filename'])
             return True
         else:
             return False
-        
+    
+    def export_file(body):
+        df = Loaders.load_pickle_file(Routes.DATA)
+        tag = body['filetag']
+        if(tag == 'p'):
+            address = Routes.EXPORTS+body['filename']
+            df.to_pickle(address)
+            return address
+        elif(tag == 'csv'):
+            address = Routes.EXPORTS+body['filename']
+            df.to_csv(address)
+            return address
+        elif(tag == 'xlsx'):
+            address = Routes.EXPORTS+body['filename']
+            df.to_excel(address)
+            return address
+        else:
+            return ""
 
     # Saves a file sent back and inserts the data into the dataset
     def save_and_insert_file(file, card_type):

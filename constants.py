@@ -18,4 +18,9 @@ class Categories:
     
 
 class Routes:
+    DATA = 'data'
     STORAGE_ADDRESS = 'resources/data.p'
+    PICKLE = 'resources/pickle/'
+    CSV = 'resources/csv/'
+    XL = 'resources/xl/'
+    EXPORTS = 'resources/exports/'
