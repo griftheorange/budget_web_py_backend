@@ -77,12 +77,6 @@ def reset_pickle():
 #     return JSON.fetch_line_data(filename, cols=cols)
 #####################################################################
 
-#for testing
-@app.route('/print_csv')
-def print_csv():
-    DH.load_and_print_csv()
-    return "Success"
-
 #helper funciton for /data index route
 def get_filenames():
     html = "<ul>"
