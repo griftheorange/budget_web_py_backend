@@ -22,6 +22,10 @@ class DataHandlers:
             for filename in listdir('resources/'+key):
                 resources[key].append(filename)
         return resources
+    
+    def get_card_list():
+        preferences = shelve.open(Routes.PREFERENCES_ADDRESS)
+        return list(preferences['user']['cards'].keys())
             
 
     # returns a default dataframe of the table data
@@ -206,10 +210,6 @@ class DataHandlers:
 
     # Saves a file sent back and inserts the data into the dataset
     def save_and_insert_file(file, card_type):
-        preferences = shelve.open('resources/preferences')
-        print(preferences)
-        preferences.close()
-
         # Load in uploaded file and current data as DFs
         # Old tail is default index of earliest value to be updated (For updating derived values: Checking, Savings, Total, Total Inc)
         uploaded_file = Loaders.save_and_load_file(file)
@@ -247,32 +247,29 @@ class DataHandlers:
     # Constructs dict framework for new dataframe, and based on card type, parses the column values into the right slots
     # TODO Error catching
     def construct_new_dataframe_dict(file, card_type):
+        preferences = shelve.open(Routes.PREFERENCES_ADDRESS)
+        cards = preferences['user']['cards']
+        for card_name in cards.keys():
+            if(card_name == card_type):
+                card = cards[card_name]
+        
         new_dataframe = {}
         for column in ColumnSets.COLUMN_LIST:
             new_dataframe[column] = []
+
         # Iterate through uploaded data and insert datum where appropriate
-        if(card_type == "TD"):
-            for index, row in file.iterrows():
-                if(row['Amount'] >= 0):
-                    new_dataframe['Transaction History'].append(row['Merchant Name'])
-                    new_dataframe['Date'].append(pd.Timestamp(row['Date']))
-                    new_dataframe['Type'].append('N/A')
-                    new_dataframe['Cost'].append(-1*row['Amount'])
-                    new_dataframe['Checking'].append(0)
-                    new_dataframe['Savings'].append(0)
-                    new_dataframe['Total'].append(0)
-                    new_dataframe['Total Income'].append(0)
-        else:
-            for index, row in file.iterrows():
-                if(row['Amount'] >= 0):
-                    new_dataframe['Transaction History'].append(row['Description'])
-                    new_dataframe['Date'].append(pd.Timestamp(row['Trans. Date']))
-                    new_dataframe['Type'].append('N/A')
-                    new_dataframe['Cost'].append(-1*row['Amount'])
-                    new_dataframe['Checking'].append(0)
-                    new_dataframe['Savings'].append(0)
-                    new_dataframe['Total'].append(0)
-                    new_dataframe['Total Income'].append(0)
+        for index, row in file.iterrows():
+            if(row['Amount'] >= 0):
+                new_dataframe['Transaction History'].append(row[card['Transaction History']])
+                new_dataframe['Date'].append(pd.Timestamp(row[card['Date']]))
+                new_dataframe['Type'].append('N/A')
+                new_dataframe['Cost'].append(-1*row[card['Cost']])
+                new_dataframe['Checking'].append(0)
+                new_dataframe['Savings'].append(0)
+                new_dataframe['Total'].append(0)
+                new_dataframe['Total Income'].append(0)
+
+        preferences.close()
         return new_dataframe
 
     # Helper funciton for recalculating Checking, Saving, Total, Total Income Columns

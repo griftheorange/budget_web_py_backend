@@ -27,6 +27,7 @@ class JSONParsers:
         format_set['spendings_pie_data'] = DH.get_pie_data(Categories.SPENDINGS, ColumnSets.PIE)
         format_set['income_pie_data'] = DH.get_pie_data(Categories.INCOME, ColumnSets.PIE)
         format_set['resources'] = DH.get_resources_filenames()
+        format_set['cards'] = DH.get_card_list()
         
         format_set['categories'] = Categories.GRIFFIN
         format_set['columns'] = ColumnSets.COLUMN_LIST

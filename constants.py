@@ -26,6 +26,7 @@ class Categories:
 # Typically saving is done straight from data_handlers, and file loading done in loaders
 class Routes:
     STORAGE_ADDRESS = 'resources/data.p'
+    PREFERENCES_ADDRESS = 'resources/preferences'
     PICKLE = 'resources/pickle/'
     CSV = 'resources/csv/'
     XL = 'resources/xl/'
