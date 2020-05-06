@@ -9,7 +9,7 @@ class JSONParsers:
     # MAIN SERIALIZER FOR APP
     # Gets full table data and formatted line graph data from data handler
     # Packages both sets into relevant keys, return json object
-    def fetch_data():
+    def fetch_data(filename):
         # Some columns need formatting to comma-separated 2-decimal dollar values
         format_set = {}
         table_data = DH.get_data().to_dict()
