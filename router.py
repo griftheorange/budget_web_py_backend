@@ -19,16 +19,10 @@ CORS(app)
 def hello_world():
     return "<h1 style='color:blue;'>Hello World!</h1>"
 
-#Index for all files in resource directory, may be needed by frontend in future
-@app.route('/data', methods=['GET'])
-def data_index():
-    html = get_filenames()
-    return html
-
 #Getter for bundled data, packages data => json and formatted line data => json into two keys, "data" and "line_data"
-@app.route('/data/<filename>', methods=["GET"])
-def data(filename):
-    return JSON.fetch_data(filename)
+@app.route('/data', methods=["GET"])
+def data():
+    return JSON.fetch_data()
 
 #saves file to proper directory loads in data, updates data.p and returns json
 #inserts to data.p and returns success or failure
@@ -80,27 +74,3 @@ def export_file():
 @app.route('/reset', methods=["PATCH"])
 def reset_pickle():
     return JSON.reset_from_backup(request.json)
-
-##############################################################################
-#helper funciton for /data index route
-def get_filenames():
-    html = "<ul>"
-    for filename in listdir('resources'):
-        html += "<li>" + filename + "</li>"
-        if(filename == "csv"):
-            html += "<ul>"
-            for filename in listdir('resources/csv'):
-                html += "<li>" + filename + "</li>"
-            html += "</ul>"
-        if(filename == "xl"):
-            html += "<ul>"
-            for filename in listdir('resources/xl'):
-                html += "<li>" + filename + "</li>"
-            html += "</ul>"
-        if(filename == "pickle"):
-            html += "<ul>"
-            for filename in listdir('resources/pickle'):
-                html += "<li>" + filename + "</li>"
-            html += "</ul>"
-    html += "</ul>"
-    return html
