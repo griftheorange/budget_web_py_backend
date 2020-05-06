@@ -19,16 +19,10 @@ CORS(app)
 def hello_world():
     return "<h1 style='color:blue;'>Hello World!</h1>"
 
-#Index for all files in resource directory, may be needed by frontend in future
-@app.route('/data', methods=['GET'])
-def data_index():
-    html = get_filenames()
-    return html
-
 #Getter for bundled data, packages data => json and formatted line data => json into two keys, "data" and "line_data"
-@app.route('/data/<filename>', methods=["GET"])
-def data(filename):
-    return JSON.fetch_data(filename)
+@app.route('/data', methods=["GET"])
+def data():
+    return JSON.fetch_data()
 
 #saves file to proper directory loads in data, updates data.p and returns json
 #inserts to data.p and returns success or failure
