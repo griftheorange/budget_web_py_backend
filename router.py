@@ -41,6 +41,11 @@ def post_data():
         return "Success"
     return "Failed"
 
+@app.route('/initialize_table', methods=["POST"])
+def initialize_table():
+    file = request.files['file']
+    return JSON.initialize_table(file)
+
 # Updates cell with new value and sends back 'status' JSON
 @app.route('/update_cell', methods=["PATCH"])
 def update_cell():

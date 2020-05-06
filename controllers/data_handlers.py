@@ -4,6 +4,7 @@ from os import listdir
 from controllers.loaders import Loaders
 from constants import *
 import pandas as pd
+import numpy as np
 
 #Data Handlers Manipulates Dataframes and DataStructures for return/formatting
 #Can call to the Loaders class for saving files and loading them into dataframes
@@ -87,7 +88,7 @@ class DataHandlers:
         df = Loaders.load_data()
         df.at[int(body['index']), body['column']] = body['category']
         df.to_pickle(Routes.STORAGE_ADDRESS)
-        return True
+        return df.to_dict()
     
     # Adds a new Entry from submitted data
     def add_entry(body):
@@ -109,7 +110,7 @@ class DataHandlers:
         # Coverts new_dataframe dict to dataframe
         new_dataframe = pd.DataFrame.from_dict(new_dataframe)
         # Concats new row to old dataframe
-        data = pd.concat([data, new_dataframe]).sort_values(by=['Date', 'Type', 'Transaction History', 'Cost']).reset_index(drop=True)
+        data = pd.concat([data, new_dataframe]).sort_values(by=['Date', 'Transaction History', 'Cost']).reset_index(drop=True)
         # Locates earliest index that Checking, Savings, Total etc will need recalc
         old_tail = data.shape[0]
         for index, row in data.iterrows():
@@ -192,6 +193,17 @@ class DataHandlers:
         else:
             return False
 
+    def initialize_table(file):
+        uploaded_file = Loaders.save_and_load_file(file)
+        columns = uploaded_file.columns.tolist()
+        for header in ColumnSets.COLUMN_LIST:
+            if not header in uploaded_file.columns:
+                return False
+        uploaded_file.sort_values(by=['Date', 'Transaction History', 'Cost'], inplace=True)
+        uploaded_file.reset_index(drop=True, inplace=True)
+        uploaded_file.to_pickle(Routes.STORAGE_ADDRESS)
+        return True
+
     # Saves a file sent back and inserts the data into the dataset
     def save_and_insert_file(file, card_type):
         # Load in uploaded file and current data as DFs
@@ -207,7 +219,9 @@ class DataHandlers:
 
         # Converts dict to DF, then concats to my data, and sorts them by date primarily, reseting index values
         new_dataframe = pd.DataFrame.from_dict(new_dataframe)
-        data = pd.concat([data, new_dataframe]).sort_values(by=['Date', 'Type', 'Transaction History', 'Cost']).reset_index(drop=True)
+        data = pd.concat([data, new_dataframe])
+        data.sort_values(by=['Date', 'Transaction History', 'Cost'], inplace=True)
+        data.reset_index(drop=True, inplace=True)
 
         # Uses the minimum date in the new data defined above
         # Finds first index occurrence of lowest added date for the new data
@@ -224,7 +238,6 @@ class DataHandlers:
         
         # Saves shiny new Data to pickle fiel
         data.to_pickle(Routes.STORAGE_ADDRESS)
-
 
     # Helper function for save_and_insert file
     # Constructs dict framework for new dataframe, and based on card type, parses the column values into the right slots

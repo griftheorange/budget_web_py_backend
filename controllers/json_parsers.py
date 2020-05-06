@@ -37,12 +37,20 @@ class JSONParsers:
     # Currentl, only Type column is able to be edited ever
     def patch_data(body):
         if((body['column'] in ColumnSets.COLUMN_LIST) and (body['category'] in Categories.GRIFFIN)):
-            if(DH.update_cell(body)):
+            success = DH.update_cell(body)
+            if(success):
                 return {
                     'status':'Success',
                     'body':body
                 }
             return {'status':'Error'}
+        return {'status':'Error'}
+    
+    def initialize_table(file):
+        if(DH.initialize_table(file)):
+            return {
+                'status':'Success'
+            }
         return {'status':'Error'}
     
     # Checks for presence of minimum required entries
