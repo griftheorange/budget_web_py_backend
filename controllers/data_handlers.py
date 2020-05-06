@@ -1,5 +1,6 @@
 from io import StringIO
 from os import listdir
+import shelve
 
 from controllers.loaders import Loaders
 from constants import *
@@ -205,6 +206,10 @@ class DataHandlers:
 
     # Saves a file sent back and inserts the data into the dataset
     def save_and_insert_file(file, card_type):
+        preferences = shelve.open('resources/preferences')
+        print(preferences)
+        preferences.close()
+
         # Load in uploaded file and current data as DFs
         # Old tail is default index of earliest value to be updated (For updating derived values: Checking, Savings, Total, Total Inc)
         uploaded_file = Loaders.save_and_load_file(file)
