@@ -1,5 +1,6 @@
 from io import StringIO
 from os import listdir
+import shelve
 
 from controllers.loaders import Loaders
 from constants import *
@@ -242,6 +243,10 @@ class DataHandlers:
     # Constructs dict framework for new dataframe, and based on card type, parses the column values into the right slots
     # TODO Error catching
     def construct_new_dataframe_dict(file, card_type):
+        preferences = shelve.open('resources/preferences')
+        print(preferences['user'])
+        preferences.close()
+
         new_dataframe = {}
         for column in ColumnSets.COLUMN_LIST:
             new_dataframe[column] = []
