@@ -110,7 +110,9 @@ class DataHandlers:
         # Coverts new_dataframe dict to dataframe
         new_dataframe = pd.DataFrame.from_dict(new_dataframe)
         # Concats new row to old dataframe
-        data = pd.concat([data, new_dataframe]).sort_values(by=['Date', 'Transaction History', 'Cost']).reset_index(drop=True)
+        data = pd.concat([data, new_dataframe])
+        data.sort_values(by=['Date', 'Transaction History', 'Cost'], inplace=True)
+        data.reset_index(drop=True, inplace=True)
         # Locates earliest index that Checking, Savings, Total etc will need recalc
         old_tail = data.shape[0]
         for index, row in data.iterrows():
@@ -132,9 +134,6 @@ class DataHandlers:
             return False
         else:
             df.reset_index(drop=True, inplace=True)
-            print(df)
-            print(index)
-            print(df.at[index, 'Transaction History'])
             DataHandlers.recalc_check_sav_tot_from(df, index-1)
             df.to_pickle(Routes.STORAGE_ADDRESS)
             return True

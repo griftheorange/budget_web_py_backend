@@ -45,5 +45,9 @@ class Loaders:
             address = Routes.XL+"%s"%(file.filename.replace(" ","_"))
             file.save(address)
             df = pd.read_excel(address)
+        else:
+            address = Routes.PICKLE+"%s"%(file.filename.replace(" ","_"))
+            file.save(address)
+            df = pd.read_pickle(address)
         #TODO Add pickle format loader
         return df
