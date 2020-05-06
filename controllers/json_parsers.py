@@ -57,6 +57,16 @@ class JSONParsers:
             return {'status':'Error'}
         return {'status':'Error'}
     
+    def delete_entry(body):
+        if(body['index']):
+            if(DH.delete_entry(body)):
+                return {
+                    'status':'Success',
+                    'body':body
+                }
+            return {'status':'Error'}
+        return {'status':'Error'}
+    
     # Checks for valid file tags
     # Attempts to save current data with filename and format matching submitted
     def save_backup(body):

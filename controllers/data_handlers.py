@@ -121,6 +121,24 @@ class DataHandlers:
         data.to_pickle(Routes.STORAGE_ADDRESS)
         return True
     
+    def delete_entry(body):
+        df = Loaders.load_data()
+        index = int(body['index'])
+        try:
+            df.drop(index, inplace=True)
+        except KeyError:
+            print("This key was out of bounds")
+            return False
+        else:
+            df.reset_index(drop=True, inplace=True)
+            print(df)
+            print(index)
+            print(df.at[index, 'Transaction History'])
+            DataHandlers.recalc_check_sav_tot_from(df, index-1)
+            df.to_pickle(Routes.STORAGE_ADDRESS)
+            return True
+
+
     # Loads dataframe and writes it as file in relevant directory based on submitted filename
     def save_backup(body):
         df = Loaders.load_data()

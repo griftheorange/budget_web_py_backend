@@ -52,6 +52,10 @@ def update_cell():
 def new_entry():
     return JSON.patch_new_entry(request.json)
 
+@app.route('/delete_entry', methods=["DELETE"])
+def delete_entry():
+    return JSON.delete_entry(request.json)
+
 # Saves current data as backup, filetype is dependent on submitted filename
 # returns 'status' JSON
 @app.route('/save_backup', methods=["POST"])
