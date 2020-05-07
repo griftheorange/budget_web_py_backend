@@ -25,20 +25,33 @@ class DataHandlers:
     
     def get_card_list():
         preferences = shelve.open(Routes.PREFERENCES_ADDRESS)
-        return list(preferences['user']['cards'].keys())
+        prefs = preferences['user']
+        preferences.close()
+        return list(prefs['cards'].keys())
             
     def get_categories():
         preferences = shelve.open(Routes.PREFERENCES_ADDRESS)
-        prefs_dict = preferences['user']
-        keys = list(prefs_dict['categories'].keys())
+        prefs = preferences['user']
+        preferences.close()
+        keys = list(prefs['categories'].keys())
         keys.sort()
         return keys
+
+    def get_special_categories():
+        preferences = shelve.open(Routes.PREFERENCES_ADDRESS)
+        prefs = preferences['user']
+        preferences.close()
+        return {
+            'transaction_type':prefs['transaction_type']
+            'correction_type':prefs['correction_type']
+        }
     
     def get_spendings_categories():
         preferences = shelve.open(Routes.PREFERENCES_ADDRESS)
-        prefs_dict = preferences['user']
+        prefs = preferences['user']
+        preferences.close()
         keys = []
-        for (key, value) in prefs_dict['categories'].items():
+        for (key, value) in prefs['categories'].items():
             if(value['spending']):
                 keys.append(key)
         keys.sort()
@@ -46,10 +59,11 @@ class DataHandlers:
 
     def get_income_categories():
         preferences = shelve.open(Routes.PREFERENCES_ADDRESS)
-        prefs_dict = preferences['user']
+        prefs = preferences['user']
+        preferences.close()
         neg_keys = []
         pos_keys = []
-        for (key, value) in prefs_dict['categories'].items():
+        for (key, value) in prefs['categories'].items():
             if(value['income']):
                 if(value['income']['is_income?']):
                     pos_keys.append(key)
@@ -60,12 +74,13 @@ class DataHandlers:
     
     def get_income_split_categories():
         preferences = shelve.open(Routes.PREFERENCES_ADDRESS)
-        prefs_dict = preferences['user']
+        prefs = preferences['user']
+        preferences.close()
         split_keys = {
             'pos':[],
             'neg':[]
         }
-        for (key, value) in prefs_dict['categories'].items():
+        for (key, value) in prefs['categories'].items():
             if(value['income']):
                 if(value['income']['is_income?']):
                     split_keys['pos'].append(key)
@@ -194,6 +209,7 @@ class DataHandlers:
         cards = prefs['cards']
         card_names = cards.keys()
         if(body['card_name'] in card_names):
+            preferences.close()
             return False
         else:
             cards[body['card_name']] = {
@@ -211,6 +227,7 @@ class DataHandlers:
         cards = prefs['cards']
         card_names = cards.keys()
         if(not body['card_name'] in card_names):
+            preferences.close()
             return False
         else:
             cards.pop(body['card_name'], None)
@@ -351,14 +368,16 @@ class DataHandlers:
     # Using start index, updates values in relavent rows until end of dataframe 
     # TRANSFER rows handle derived columns differently, this function should respond correctly to this behavior
     def recalc_check_sav_tot_from(data, start):
+        preferences = shelve.open(Routes.PREFERENCES_ADDRESS)
+        prefs = preferences['user']
         end = data.shape[0]
         for i in range(start, end):
             # Runs standard calc for all non-transfer rows
-            if(not data.at[i, 'Type'] in ['TRANSFER']):
+            if(data.at[i, 'Type'] != prefs['transfer_type']):
                 data.at[i, 'Checking'] = data.at[i-1, 'Checking'] + data.at[i, 'Cost']
                 data.at[i, 'Savings'] = data.at[i-1, 'Savings']
                 data.at[i, 'Total'] = data.at[i, 'Checking'] + data.at[i, 'Savings']
-                if(data.at[i, 'Cost'] >= 0 and data.at[i, 'Type'] != "TRANSFER" and data.at[i, 'Type'] != "Correction"):
+                if(data.at[i, 'Cost'] >= 0 and data.at[i, 'Type'] != prefs['transfer_type'] and data.at[i, 'Type'] != prefs['correction_type']):
                     data.at[i, 'Total Income'] = data.at[i-1, 'Total Income'] + data.at[i, 'Cost']
                 else:
                     data.at[i, 'Total Income'] = data.at[i-1, 'Total Income']
@@ -369,3 +388,4 @@ class DataHandlers:
                 data.at[i, 'Savings'] = data.at[i-1, 'Savings'] - data.at[i, 'Cost']
                 data.at[i, 'Total'] = data.at[i, 'Checking'] + data.at[i, 'Savings']
                 data.at[i, 'Total Income'] = data.at[i-1, 'Total Income']
+        preferences.close()

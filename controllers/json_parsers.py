@@ -27,12 +27,14 @@ class JSONParsers:
         format_set['spendings_pie_data'] = DH.get_pie_data(DH.get_spendings_categories(), ColumnSets.PIE)
         format_set['income_pie_data'] = DH.get_pie_data(DH.get_income_categories(), ColumnSets.PIE)
         format_set['resources'] = DH.get_resources_filenames()
-        format_set['cards'] = DH.get_card_list()
         
-        format_set['categories'] = DH.get_categories()
         
         # Below tag for Graph coloring on frontend
         format_set['income_pie_split_categories'] = DH.get_income_split_categories()
+
+        format_set['special_categories'] = DH.get_special_categories()
+        format_set['cards'] = DH.get_card_list()
+        format_set['categories'] = DH.get_categories()
         format_set['columns'] = ColumnSets.COLUMN_LIST
         return format_set
 
