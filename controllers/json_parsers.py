@@ -66,6 +66,16 @@ class JSONParsers:
             return {'status':'Error'}
         return {'status':'Error'}
     
+    def delete_entry(body):
+        if(body['index']):
+            if(DH.delete_entry(body)):
+                return {
+                    'status':'Success',
+                    'body':body
+                }
+            return {'status':'Error'}
+        return {'status':'Error'}
+
     def patch_new_card(body):
         if(body['card_name'] and body['th'] and body['date'] and body['cost']):
             if(DH.add_card(body)):
@@ -76,15 +86,16 @@ class JSONParsers:
             return {'status':'Error'}
         return {'status':'Error'}
     
-    def delete_entry(body):
-        if(body['index']):
-            if(DH.delete_entry(body)):
+    def delete_card(body):
+        if(body['card_name']):
+            if(DH.delete_card(body)):
                 return {
                     'status':'Success',
                     'body':body
                 }
-            return {'status':'Error'}
+            return {'status': 'Error'}
         return {'status':'Error'}
+    
     
     # Checks for valid file tags
     # Attempts to save current data with filename and format matching submitted

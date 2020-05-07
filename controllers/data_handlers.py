@@ -129,6 +129,20 @@ class DataHandlers:
         data.to_pickle(Routes.STORAGE_ADDRESS)
         return True
     
+    def delete_entry(body):
+        df = Loaders.load_data()
+        index = int(body['index'])
+        try:
+            df.drop(index, inplace=True)
+        except KeyError:
+            print("This key was out of bounds")
+            return False
+        else:
+            df.reset_index(drop=True, inplace=True)
+            DataHandlers.recalc_check_sav_tot_from(df, index-1)
+            df.to_pickle(Routes.STORAGE_ADDRESS)
+            return True
+
     def add_card(body):
         preferences = shelve.open(Routes.PREFERENCES_ADDRESS)
         prefs = preferences['user']
@@ -146,20 +160,18 @@ class DataHandlers:
             preferences.close()
             return True
     
-    def delete_entry(body):
-        df = Loaders.load_data()
-        index = int(body['index'])
-        try:
-            df.drop(index, inplace=True)
-        except KeyError:
-            print("This key was out of bounds")
+    def delete_card(body):
+        preferences = shelve.open(Routes.PREFERENCES_ADDRESS)
+        prefs = preferences['user']
+        cards = prefs['cards']
+        card_names = cards.keys()
+        if(not body['card_name'] in card_names):
             return False
         else:
-            df.reset_index(drop=True, inplace=True)
-            DataHandlers.recalc_check_sav_tot_from(df, index-1)
-            df.to_pickle(Routes.STORAGE_ADDRESS)
+            cards.pop(body['card_name'], None)
+            preferences['user'] = prefs
+            preferences.close()
             return True
-
 
     # Loads dataframe and writes it as file in relevant directory based on submitted filename
     def save_backup(body):
