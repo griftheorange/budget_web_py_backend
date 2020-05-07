@@ -24,12 +24,15 @@ class JSONParsers:
         # Gets processed Line Data and places both in appropriate keys, returning dictionary
         format_set['table_data'] = table_data
         format_set['line_data'] = DH.get_line_data(ColumnSets.LINE)
-        format_set['spendings_pie_data'] = DH.get_pie_data(Categories.SPENDINGS, ColumnSets.PIE)
-        format_set['income_pie_data'] = DH.get_pie_data(Categories.INCOME, ColumnSets.PIE)
+        format_set['spendings_pie_data'] = DH.get_pie_data(DH.get_spendings_categories(), ColumnSets.PIE)
+        format_set['income_pie_data'] = DH.get_pie_data(DH.get_income_categories(), ColumnSets.PIE)
         format_set['resources'] = DH.get_resources_filenames()
         format_set['cards'] = DH.get_card_list()
         
         format_set['categories'] = DH.get_categories()
+        
+        # Below tag for Graph coloring on frontend
+        format_set['income_pie_split_categories'] = DH.get_income_split_categories()
         format_set['columns'] = ColumnSets.COLUMN_LIST
         return format_set
 
@@ -37,7 +40,7 @@ class JSONParsers:
     # Checks for valid values of column and category for editing
     # Currentl, only Type column is able to be edited ever
     def patch_data(body):
-        if((body['column'] in ColumnSets.COLUMN_LIST) and (body['category'] in Categories.GRIFFIN)):
+        if((body['column'] in ColumnSets.COLUMN_LIST) and (body['category'] in DH.get_categories())):
             success = DH.update_cell(body)
             if(success):
                 return {

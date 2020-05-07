@@ -9,17 +9,6 @@ class ColumnSets:
 # Collections of categories, primarily categories from the 'Type' column
 # Also includes FILE_TAGS, listing acceptable file tags for export, save etc.
 class Categories:
-    GRIFFIN = ['BUSINESS','Correction','DINING','ENTERTAINMENT',
-               'GAS','GROCERY','HEALTHCARE','INCOME','RENT',
-               'SCHOOL','SHOPPING','TAX','TRANSFER','TRAVEL',
-               'UNTRACKED','UTILITIES']
-    SPENDINGS = ['BUSINESS','DINING','ENTERTAINMENT',
-               'GAS','GROCERY','HEALTHCARE','RENT',
-               'SCHOOL','SHOPPING','TRAVEL','UTILITIES']
-    INCOME = ['BUSINESS','DINING','ENTERTAINMENT',
-               'GAS','GROCERY','HEALTHCARE','INCOME','RENT',
-               'SCHOOL','SHOPPING','TAX','TRAVEL',
-               'UNTRACKED','UTILITIES']
     FILE_TAGS = ['p','csv','xlsx']
     
 # Stores routes for saving and loading files

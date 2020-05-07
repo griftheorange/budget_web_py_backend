@@ -28,7 +28,50 @@ class DataHandlers:
         return list(preferences['user']['cards'].keys())
             
     def get_categories():
-        return Categories.GRIFFIN
+        preferences = shelve.open(Routes.PREFERENCES_ADDRESS)
+        prefs_dict = preferences['user']
+        keys = list(prefs_dict['categories'].keys())
+        keys.sort()
+        return keys
+    
+    def get_spendings_categories():
+        preferences = shelve.open(Routes.PREFERENCES_ADDRESS)
+        prefs_dict = preferences['user']
+        keys = []
+        for (key, value) in prefs_dict['categories'].items():
+            if(value['spending']):
+                keys.append(key)
+        keys.sort()
+        return keys
+
+    def get_income_categories():
+        preferences = shelve.open(Routes.PREFERENCES_ADDRESS)
+        prefs_dict = preferences['user']
+        neg_keys = []
+        pos_keys = []
+        for (key, value) in prefs_dict['categories'].items():
+            if(value['income']):
+                if(value['income']['is_income?']):
+                    pos_keys.append(key)
+                else:
+                    neg_keys.append(key)
+        keys = neg_keys + pos_keys
+        return keys
+    
+    def get_income_split_categories():
+        preferences = shelve.open(Routes.PREFERENCES_ADDRESS)
+        prefs_dict = preferences['user']
+        split_keys = {
+            'pos':[],
+            'neg':[]
+        }
+        for (key, value) in prefs_dict['categories'].items():
+            if(value['income']):
+                if(value['income']['is_income?']):
+                    split_keys['pos'].append(key)
+                else:
+                    split_keys['neg'].append(key)
+        return split_keys
 
     # returns a default dataframe of the table data
     def get_data(cols=None):
@@ -315,7 +358,7 @@ class DataHandlers:
                 data.at[i, 'Checking'] = data.at[i-1, 'Checking'] + data.at[i, 'Cost']
                 data.at[i, 'Savings'] = data.at[i-1, 'Savings']
                 data.at[i, 'Total'] = data.at[i, 'Checking'] + data.at[i, 'Savings']
-                if(data.at[i, 'Cost'] >= 0 and data.at[i, 'Type'] != "TRANSFER" data.at[i, 'Type'] != "Correction"):
+                if(data.at[i, 'Cost'] >= 0 and data.at[i, 'Type'] != "TRANSFER" and data.at[i, 'Type'] != "Correction"):
                     data.at[i, 'Total Income'] = data.at[i-1, 'Total Income'] + data.at[i, 'Cost']
                 else:
                     data.at[i, 'Total Income'] = data.at[i-1, 'Total Income']
