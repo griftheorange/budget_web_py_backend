@@ -29,7 +29,7 @@ class JSONParsers:
         format_set['resources'] = DH.get_resources_filenames()
         format_set['cards'] = DH.get_card_list()
         
-        format_set['categories'] = Categories.GRIFFIN
+        format_set['categories'] = DH.get_categories()
         format_set['columns'] = ColumnSets.COLUMN_LIST
         return format_set
 

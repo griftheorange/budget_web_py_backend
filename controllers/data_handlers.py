@@ -27,6 +27,8 @@ class DataHandlers:
         preferences = shelve.open(Routes.PREFERENCES_ADDRESS)
         return list(preferences['user']['cards'].keys())
             
+    def get_categories():
+        return Categories.GRIFFIN
 
     # returns a default dataframe of the table data
     def get_data(cols=None):
@@ -313,7 +315,7 @@ class DataHandlers:
                 data.at[i, 'Checking'] = data.at[i-1, 'Checking'] + data.at[i, 'Cost']
                 data.at[i, 'Savings'] = data.at[i-1, 'Savings']
                 data.at[i, 'Total'] = data.at[i, 'Checking'] + data.at[i, 'Savings']
-                if(data.at[i, 'Cost'] >= 0 and data.at[i, 'Type'] != "TRANSFER"):
+                if(data.at[i, 'Cost'] >= 0 and data.at[i, 'Type'] != "TRANSFER" data.at[i, 'Type'] != "Correction"):
                     data.at[i, 'Total Income'] = data.at[i-1, 'Total Income'] + data.at[i, 'Cost']
                 else:
                     data.at[i, 'Total Income'] = data.at[i-1, 'Total Income']
