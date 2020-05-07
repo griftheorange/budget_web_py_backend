@@ -129,6 +129,23 @@ class DataHandlers:
         data.to_pickle(Routes.STORAGE_ADDRESS)
         return True
     
+    def add_card(body):
+        preferences = shelve.open(Routes.PREFERENCES_ADDRESS)
+        prefs = preferences['user']
+        cards = prefs['cards']
+        card_names = cards.keys()
+        if(body['card_name'] in card_names):
+            return False
+        else:
+            cards[body['card_name']] = {
+                'Transaction History':body['th'],
+                'Date':body['date'],
+                'Cost':body['cost']
+            }
+            preferences['user'] = prefs
+            preferences.close()
+            return True
+    
     def delete_entry(body):
         df = Loaders.load_data()
         index = int(body['index'])
@@ -249,6 +266,7 @@ class DataHandlers:
     def construct_new_dataframe_dict(file, card_type):
         preferences = shelve.open(Routes.PREFERENCES_ADDRESS)
         cards = preferences['user']['cards']
+        print(cards)
         for card_name in cards.keys():
             if(card_name == card_type):
                 card = cards[card_name]
