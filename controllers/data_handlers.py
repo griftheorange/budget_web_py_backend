@@ -42,7 +42,7 @@ class DataHandlers:
         prefs = preferences['user']
         preferences.close()
         return {
-            'transaction_type':prefs['transaction_type']
+            'transfer_type':prefs['transfer_type'],
             'correction_type':prefs['correction_type']
         }
     
