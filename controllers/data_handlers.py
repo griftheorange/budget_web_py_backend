@@ -130,10 +130,10 @@ class DataHandlers:
         df = Loaders.load_data(cols)
         df = df.groupby(['Type']).sum()
         # Below adjustments are personal, due to errors in my data, remove if you use
-        df.at['INCOME', 'Cost'] += 10800
-        df.at['TAX', 'Cost'] -= 5703.06
-        df.at['UNTRACKED', 'Cost'] -= 3200
-        Sets framework, iterates through aggregate table and fills matching values
+        # df.at['INCOME', 'Cost'] += 10800
+        # df.at['TAX', 'Cost'] -= 5703.06
+        # df.at['UNTRACKED', 'Cost'] -= 3200
+        # Sets framework, iterates through aggregate table and fills matching values
         # into arrays in order
         dataset = {
             'data':[],
