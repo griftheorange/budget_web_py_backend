@@ -83,26 +83,6 @@ def export_file():
 def reset_pickle():
     return JSON.reset_from_backup(request.json)
 
-##############################################################################
-#helper funciton for /data index route
-def get_filenames():
-    html = "<ul>"
-    for filename in listdir('resources'):
-        html += "<li>" + filename + "</li>"
-        if(filename == "csv"):
-            html += "<ul>"
-            for filename in listdir('resources/csv'):
-                html += "<li>" + filename + "</li>"
-            html += "</ul>"
-        if(filename == "xl"):
-            html += "<ul>"
-            for filename in listdir('resources/xl'):
-                html += "<li>" + filename + "</li>"
-            html += "</ul>"
-        if(filename == "pickle"):
-            html += "<ul>"
-            for filename in listdir('resources/pickle'):
-                html += "<li>" + filename + "</li>"
-            html += "</ul>"
-    html += "</ul>"
-    return html
+@app.route('/patch_types', methods=["PATCH"])
+def patch_types():
+    return JSON.patch_types(request.json)
