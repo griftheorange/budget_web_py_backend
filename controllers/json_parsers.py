@@ -24,6 +24,8 @@ class JSONParsers:
         # Gets processed Line Data and places both in appropriate keys, returning dictionary
         format_set['table_data'] = table_data
         format_set['line_data'] = DH.get_line_data(ColumnSets.LINE)
+        format_set['income_pie_categories'] = DH.get_income_categories()
+        format_set['spendings_pie_categories'] = DH.get_spendings_categories()
         format_set['spendings_pie_data'] = DH.get_pie_data(DH.get_spendings_categories(), ColumnSets.PIE)
         format_set['income_pie_data'] = DH.get_pie_data(DH.get_income_categories(), ColumnSets.PIE)
         format_set['resources'] = DH.get_resources_filenames()

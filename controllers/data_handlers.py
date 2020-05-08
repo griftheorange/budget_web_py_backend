@@ -91,6 +91,7 @@ class DataHandlers:
     # returns a default dataframe of the table data
     def get_data(cols=None):
         df = Loaders.load_data(cols)
+        df.replace(np.nan, 'N/A', regex=True, inplace=True)
         return df
 
 
@@ -140,11 +141,17 @@ class DataHandlers:
             'labels':[]
         }
         for i in range(len(cats)):
-            datum = df.at[cats[i], 'Cost']
-            if(datum < 0):
-                datum *= -1
-            dataset['data'].append(round(datum, 2))
-            dataset['labels'].append(cats[i])
+            try:
+                datum = df.at[cats[i], 'Cost']
+            except KeyError:
+                datum = 0
+                dataset['data'].append(round(datum, 2))
+                dataset['labels'].append(cats[i])
+            else:
+                if(datum < 0):
+                    datum *= -1
+                dataset['data'].append(round(datum, 2))
+                dataset['labels'].append(cats[i])
         return dataset
 
 
@@ -311,6 +318,7 @@ class DataHandlers:
             return True
         elif(tag == 'xlsx'):
             df = Loaders.load_excel_file(body['filename'])
+            print(df)
             df.to_pickle(Routes.STORAGE_ADDRESS)
             return True
         else:
@@ -318,6 +326,14 @@ class DataHandlers:
 
     def initialize_table(file):
         uploaded_file = Loaders.save_and_load_file(file)
+        uploaded_file = uploaded_file.astype({
+            'Cost':'float_',
+            'Checking':'float_',
+            'Savings':'float_',
+            'Total':'float_',
+            'Total Income':'float_'
+        })
+        Loaders.initialize_files()
         columns = uploaded_file.columns.tolist()
         for header in ColumnSets.COLUMN_LIST:
             if not header in uploaded_file.columns:
@@ -368,7 +384,6 @@ class DataHandlers:
     def construct_new_dataframe_dict(file, card_type):
         preferences = shelve.open(Routes.PREFERENCES_ADDRESS)
         cards = preferences['user']['cards']
-        print(cards)
         for card_name in cards.keys():
             if(card_name == card_type):
                 card = cards[card_name]

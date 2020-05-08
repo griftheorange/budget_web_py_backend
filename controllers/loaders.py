@@ -1,4 +1,6 @@
 import pandas as pd
+import numpy as np
+import shelve
 from constants import Routes
 
 #This class handles all file saving and file loading into pandas DFs
@@ -45,9 +47,37 @@ class Loaders:
             address = Routes.XL+"%s"%(file.filename.replace(" ","_"))
             file.save(address)
             df = pd.read_excel(address)
+            df.to_excel(address)
         else:
             address = Routes.PICKLE+"%s"%(file.filename.replace(" ","_"))
             file.save(address)
             df = pd.read_pickle(address)
         #TODO Add pickle format loader
         return df
+
+    def initialize_files():
+        data_framework = {
+            'Transaction History':[],
+            'Date':[],
+            'Type':[],
+            'Cost':[],
+            'Checking':[],
+            'Savings':[],
+            'Total':[],
+            'Total Income':[]
+        }
+        pd.DataFrame.from_dict(data_framework).to_pickle(Routes.STORAGE_ADDRESS)
+
+        preferences = shelve.open(Routes.PREFERENCES_ADDRESS)
+        try:
+            preferences['user']
+        except KeyError:
+            preferences_framework = {
+                'cards':{},
+                'categories':{},
+                'transfer_type':None,
+                'correction_type':None
+            }
+            preferences['user'] = preferences_framework
+        preferences.close()
+        
