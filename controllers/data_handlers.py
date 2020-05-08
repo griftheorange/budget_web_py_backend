@@ -337,7 +337,7 @@ class DataHandlers:
         preferences = shelve.open(Routes.PREFERENCES_ADDRESS)
         prefs = preferences['user']
         for category in np.unique(uploaded_file[['Type']].values):
-            if(category not in pref['categories'].keys):
+            if(category not in prefs['categories'].keys):
                 prefs['categories'][category] = {
                 spending:False,
                 income:False
