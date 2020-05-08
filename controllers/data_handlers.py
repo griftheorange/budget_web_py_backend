@@ -334,6 +334,16 @@ class DataHandlers:
             'Total Income':'float_'
         })
         Loaders.initialize_files()
+        preferences = shelve.open(Routes.PREFERENCES_ADDRESS)
+        prefs = preferences['user']
+        for category in np.unique(uploaded_file[['Type']].values)):
+            if(category not in pref['categories'].keys):
+                prefs['categories'][category] = {
+                spending:False,
+                income:False
+            }
+        preferences['user'] = prefs
+        preferences.close()
         columns = uploaded_file.columns.tolist()
         for header in ColumnSets.COLUMN_LIST:
             if not header in uploaded_file.columns:
