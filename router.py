@@ -30,7 +30,7 @@ def data():
 def post_data():
     file = request.files['file']
     card_type = request.args['cardType']
-    if(file):
+    if(file and card_type != ""):
         DH.save_and_insert_file(file, card_type)
         return "Success"
     return "Failed"
