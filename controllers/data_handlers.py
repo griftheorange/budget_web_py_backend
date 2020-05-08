@@ -154,6 +154,34 @@ class DataHandlers:
         df.at[int(body['index']), body['column']] = body['category']
         df.to_pickle(Routes.STORAGE_ADDRESS)
         return df.to_dict()
+
+    def patch_types(body):
+        preferences = shelve.open(Routes.PREFERENCES_ADDRESS)
+        prefs = preferences['user']
+        new_prefs = {
+            'cards':prefs['cards'],
+            'transfer_type':body['transfer'],
+            'correction_type':body['correction'],
+            'categories':{}
+        }
+        for category in body['categories']:
+            new_prefs['categories'][category] = {
+                'spending': category in body['spending'],
+                'income':DataHandlers.get_income_specs(category, body['income'], body['pos'])
+            }
+        preferences['user'] = new_prefs
+        preferences.close()
+        return True
+        # for category in body['categories']:
+    
+    def get_income_specs(category, income_graph_arr, pos_values_arr):
+        if category in income_graph_arr:
+            return {
+                'is_income?':category in pos_values_arr
+            }
+        else:
+            return False
+
     
     # Adds a new Entry from submitted data
     def add_entry(body):

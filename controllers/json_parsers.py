@@ -52,6 +52,19 @@ class JSONParsers:
             return {'status':'Error'}
         return {'status':'Error'}
     
+    def patch_types(body):
+        for key in ['spending', 'income', 'pos', 'categories', 'transfer', 'correction']:
+            try:
+                body[key]
+            except KeyError:
+                return {'status':'Error'}
+        if(DH.patch_types(body)):
+            return {
+                'status':'Success',
+                'body':body
+            }
+        return {'status':'Error'}
+    
     def initialize_table(file):
         if(DH.initialize_table(file)):
             return {
