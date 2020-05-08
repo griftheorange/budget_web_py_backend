@@ -333,15 +333,22 @@ class DataHandlers:
             'Total':'float_',
             'Total Income':'float_'
         })
+        uploaded_file.replace(np.nan, 'N/A', regex=True, inplace=True)
         Loaders.initialize_files()
         preferences = shelve.open(Routes.PREFERENCES_ADDRESS)
         prefs = preferences['user']
         for category in np.unique(uploaded_file[['Type']].values):
-            if(category not in prefs['categories'].keys()):
-                prefs['categories'][category] = {
-                'spending':False,
-                'income':False
-            }
+            if category != 'N/A':
+                if(category not in prefs['categories'].keys()):
+                    prefs['categories'][category] = {
+                        'spending':False,
+                        'income':False
+                }
+        for (category, values) in prefs['categories'].items():
+            if category.lower() == 'correction' :
+                prefs['correction_type'] = category
+            if category.lower() == 'transfer':
+                prefs['transfer_type'] = category
         preferences['user'] = prefs
         preferences.close()
         columns = uploaded_file.columns.tolist()

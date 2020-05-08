@@ -79,5 +79,13 @@ class Loaders:
                 'correction_type':None
             }
             preferences['user'] = preferences_framework
+        else:
+            preferences_framework = {
+                'cards':preferences['user']['cards'],
+                'categories':{},
+                'transfer_type':None,
+                'correction_type':None
+            }
+            preferences['user'] = preferences_framework
         preferences.close()
         
