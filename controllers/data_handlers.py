@@ -411,7 +411,7 @@ class DataHandlers:
 
         # Iterate through uploaded data and insert datum where appropriate
         for index, row in file.iterrows():
-            if(row['Amount'] >= 0):
+            if(row[card['Cost']] >= 0):
                 new_dataframe['Transaction History'].append(row[card['Transaction History']])
                 new_dataframe['Date'].append(pd.Timestamp(row[card['Date']]))
                 new_dataframe['Type'].append('N/A')
