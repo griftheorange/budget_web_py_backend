@@ -60,7 +60,6 @@ class DataHandlers:
     def get_income_categories():
         preferences = shelve.open(Routes.PREFERENCES_ADDRESS)
         prefs = preferences['user']
-        print(prefs)
         preferences.close()
         neg_keys = []
         pos_keys = []
@@ -71,7 +70,6 @@ class DataHandlers:
                 else:
                     neg_keys.append(key)
         keys = neg_keys + pos_keys
-        print(keys)
         return keys
     
     def get_income_split_categories():
@@ -322,7 +320,6 @@ class DataHandlers:
             return True
         elif(tag == 'xlsx'):
             df = Loaders.load_excel_file(body['filename'])
-            print(df)
             df.to_pickle(Routes.STORAGE_ADDRESS)
             return True
         else:
