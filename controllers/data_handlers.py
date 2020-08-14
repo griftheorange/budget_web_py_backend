@@ -60,6 +60,7 @@ class DataHandlers:
     def get_income_categories():
         preferences = shelve.open(Routes.PREFERENCES_ADDRESS)
         prefs = preferences['user']
+        print(prefs)
         preferences.close()
         neg_keys = []
         pos_keys = []
@@ -70,6 +71,7 @@ class DataHandlers:
                 else:
                     neg_keys.append(key)
         keys = neg_keys + pos_keys
+        print(keys)
         return keys
     
     def get_income_split_categories():
@@ -207,6 +209,8 @@ class DataHandlers:
         new_dataframe['Savings'] = [0]
         new_dataframe['Total'] = [0]
         new_dataframe['Total Income'] = [0]
+        new_dataframe['401k'] = [0]
+        new_dataframe['HSA Account'] = [0]
         # Coverts new_dataframe dict to dataframe
         new_dataframe = pd.DataFrame.from_dict(new_dataframe)
         # Concats new row to old dataframe
@@ -441,6 +445,14 @@ class DataHandlers:
                     data.at[i, 'Total Income'] = data.at[i-1, 'Total Income'] + data.at[i, 'Cost']
                 else:
                     data.at[i, 'Total Income'] = data.at[i-1, 'Total Income']
+                if(data.at[i, 'Type'] == 'BENEFITS HSA'):
+                    data.at[i, 'HSA Account'] = data.at[i-1, 'HSA Account'] + (-1*data.at[i, 'Cost'])
+                else:
+                    data.at[i, 'HSA Account'] = data.at[i-1, 'HSA Account']
+                if(data.at[i, 'Type'] == 'RETIREMENT'):
+                    data.at[i, '401k'] = data.at[i-1, '401k'] + (-1*data.at[i, 'Cost'])
+                else:
+                    data.at[i, '401k'] = data.at[i-1, '401k']
             # Below transforms the TRANSFER rows, which uniquely need to increment Cost AND Savings
             # Total Income NEVER incremented on TRANSFERS
             else:
@@ -448,4 +460,6 @@ class DataHandlers:
                 data.at[i, 'Savings'] = data.at[i-1, 'Savings'] - data.at[i, 'Cost']
                 data.at[i, 'Total'] = data.at[i, 'Checking'] + data.at[i, 'Savings']
                 data.at[i, 'Total Income'] = data.at[i-1, 'Total Income']
+                data.at[i, '401k'] = data.at[i-1, '401k']
+                data.at[i, 'HSA Account'] = data.at[i-1, 'HSA Account']
         preferences.close()

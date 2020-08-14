@@ -1,9 +1,9 @@
 # Column Collections from my dataset
 # Used for selecting out columns for different operations
 class ColumnSets:
-    COLUMN_LIST = ['Transaction History', 'Date', 'Type', 'Cost', 'Checking', 'Savings', 'Total', 'Total Income']
+    COLUMN_LIST = ['Transaction History', 'Date', 'Type', 'Cost', 'Checking', 'Savings', 'Total', 'Total Income', '401k', 'HSA Account']
     MONETARY = ['Cost', 'Checking', 'Savings', 'Total', 'Total Income']
-    LINE = ['Transaction History', 'Date', 'Cost', 'Checking', 'Savings', 'Total', 'Total Income']
+    LINE = ['Transaction History', 'Date', 'Cost', 'Checking', 'Savings', 'Total', 'Total Income', '401k', 'HSA Account']
     PIE= ['Type', 'Cost']
 
 # Collections of categories, primarily categories from the 'Type' column
